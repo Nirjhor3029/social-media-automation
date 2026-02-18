@@ -40,7 +40,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('temnplates', 'TemnplateController');
 
     // Whstapp Subscriber
-    Route::get('whstapp-subscribers/connect',[WhstappSubscriberController::class,'connect'])->name('whstapp-subscribers.connect');
+    Route::get('whstapp-subscribers/status', [WhstappSubscriberController::class, 'checkStatus'])->name('whstapp-subscribers.status');
+    Route::get('whstapp-subscribers/connect', [WhstappSubscriberController::class, 'connect'])->name('whstapp-subscribers.connect');
     Route::delete('whstapp-subscribers/destroy', 'WhstappSubscriberController@massDestroy')->name('whstapp-subscribers.massDestroy');
     Route::resource('whstapp-subscribers', 'WhstappSubscriberController');
 

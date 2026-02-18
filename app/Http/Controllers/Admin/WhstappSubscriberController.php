@@ -100,15 +100,11 @@ class WhstappSubscriberController extends Controller
         // abort_if(Gate::denies('whstapp_subscriber_connect'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $subscriber_id = $request->subscriber_id ?? null;
-
         $authUser = Auth::user();
-        //  return $authUser->phone;
 
         if (!isset($authUser->phone)) {
             return Redirect::back()->with('warning', 'Please update your phone number first.');
         }
-        
-
 
         if ($subscriber_id == null) {
             $subcriber = WhstappSubscriber::where('phone', $authUser->phone)->first();
@@ -119,8 +115,83 @@ class WhstappSubscriberController extends Controller
                 $subcriber->user_id = $authUser->id;
                 $subcriber->save();
             }
+        } else {
+            $subcriber = WhstappSubscriber::find($subscriber_id);
+        }
+
+        if (!$subcriber) {
+            return Redirect::back()->with('error', 'Subscriber not found.');
+        }
+
+        // Only hit QR API if we don't have a QR OR if previous session is explicitly disconnected/failed
+        $needsQr = !$subcriber->qr || in_array($subcriber->status, ['closed', 'disconnected', 'expired']);
+
+        // Quick fix: if status is connected/authenticated/ready, we definitely DON'T need a new QR
+        if (in_array($subcriber->status, ['connected', 'authenticated', 'ready'])) {
+            $needsQr = false;
+        }
+
+        if ($needsQr) {
+            try {
+                $baseUrl = env('SMA_BASE_URL', 'http://localhost:3000');
+                $response = \Illuminate\Support\Facades\Http::post($baseUrl . '/api/sessions/qr', [
+                    'name' => $subcriber->name,
+                    'number' => $subcriber->phone,
+                ]);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    if (isset($data['ok']) && $data['ok']) {
+                        $subcriber->update([
+                            'session' => $data['sessionId'] ?? $subcriber->session,
+                            'qr' => $data['qr'] ?? null,
+                            'status' => $data['status'] ?? 'pending',
+                            'qr_updated_at' => now(),
+                        ]);
+                    }
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('WhatsApp QR API Error: ' . $e->getMessage());
+            }
         }
 
         return view('admin.whstappSubscribers.connect', compact('subcriber'));
+    }
+
+    public function checkStatus(Request $request)
+    {
+        $subscriber_id = $request->subscriber_id;
+        $subcriber = WhstappSubscriber::find($subscriber_id);
+
+        if (!$subcriber || !$subcriber->session) {
+            return response()->json(['ok' => false, 'status' => 'error', 'message' => 'No session found'], 404);
+        }
+
+        try {
+            $baseUrl = env('SMA_BASE_URL', 'http://localhost:3000');
+            $response = \Illuminate\Support\Facades\Http::get($baseUrl . "/api/sessions/{$subcriber->session}/status");
+
+            if ($response->successful()) {
+                $data = $response->json();
+                if (isset($data['ok']) && $data['ok']) {
+                    $newStatus = $data['status'] ?? $subcriber->status;
+
+                    // Update local DB if status changed
+                    if ($newStatus != $subcriber->status) {
+                        $subcriber->update(['status' => $newStatus]);
+                    }
+
+                    return response()->json([
+                        'ok' => true,
+                        'status' => $newStatus,
+                        'session' => $subcriber->session
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            return response()->json(['ok' => false, 'status' => 'error', 'message' => $e->getMessage()], 500);
+        }
+
+        return response()->json(['ok' => false, 'status' => $subcriber->status]);
     }
 }

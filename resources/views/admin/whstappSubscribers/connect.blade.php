@@ -1,43 +1,6 @@
-<!DOCTYPE html>
+@extends('layouts.admin')
 
-<html lang="en">
-
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>WhatsApp QR Connection Interface</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#4a8fd9",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#121920",
-                    },
-                    fontFamily: {
-                        "display": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                },
-            },
-        }
-    </script>
+@section('styles')
     <style>
         @keyframes pulse-ring {
             0% {
@@ -64,225 +27,300 @@
             z-index: -1;
             animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
         }
-    </style>
-</head>
 
-<body
-    class="font-display bg-background-light dark:bg-background-dark text-[#121417] dark:text-white min-h-screen flex flex-col overflow-x-hidden">
-    <!-- Top Navigation -->
-    <header
-        class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e5e7eb] dark:border-b-gray-700 bg-white dark:bg-[#1a222c] px-6 py-4 md:px-10">
-        <div class="flex items-center gap-4 text-[#121417] dark:text-white">
-            <div class="size-8 text-primary flex items-center justify-center">
-                <span class="material-symbols-outlined !text-[32px]">hub</span>
-            </div>
-            <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">SocialConnect</h2>
-        </div>
-        <!-- Desktop Menu -->
-        <div class="hidden md:flex flex-1 justify-end gap-8 items-center">
-            <nav class="flex items-center gap-6">
-                <a class="text-[#64748b] dark:text-gray-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors"
-                    href="#">Dashboard</a>
-                <a class="text-primary text-sm font-medium" href="#">Accounts</a>
-                <a class="text-[#64748b] dark:text-gray-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors"
-                    href="#">Broadcasts</a>
-                <a class="text-[#64748b] dark:text-gray-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors"
-                    href="#">Settings</a>
-            </nav>
-            <div class="flex items-center gap-4">
-                <button
-                    class="size-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:text-primary transition-colors">
-                    <span class="material-symbols-outlined">notifications</span>
-                </button>
-                <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 border-2 border-white dark:border-gray-700 shadow-sm"
-                    data-alt="User profile picture placeholder"
-                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAI1T7J29-xfDnLCz1rABoIF3oC54-GZo7wERD7--l0EE4JDmGGas5KyxUwTr9mROg_PhGPKZWtmm2CtVtACc4hsOEQtIJjmUMaCpV2M3gHkX9a6eQUySoxe6Y0WKkJOrggJGNmMiPATXRHqjsXYJN453xpLWsv6S7cBBdqnwtV83xHVebygkudC_BD4kq3zUMeRY95c-a3RN3DnbfspiU82Crk57-3u0uko0Z2dTSNXQXPHinOsmbNrUHlszmzegxvNP1Fx4mYAGKU");'>
-                </div>
-            </div>
-        </div>
-        <!-- Mobile Menu Icon -->
-        <div class="md:hidden flex items-center">
-            <button class="text-gray-700 dark:text-white">
-                <span class="material-symbols-outlined">menu</span>
-            </button>
-        </div>
-    </header>
+        .qr-gradient-border {
+            background: linear-gradient(135deg, rgba(74, 143, 217, 0.2) 0%, rgba(37, 211, 102, 0.2) 100%);
+        }
+
+        .dark .qr-gradient-border {
+            background: linear-gradient(135deg, rgba(74, 143, 217, 0.1) 0%, rgba(37, 211, 102, 0.1) 100%);
+        }
+    </style>
+@endsection
+
+@section('content')
     <!-- Main Content Area -->
-    <main
-        class="flex-1 flex flex-col items-center justify-start py-8 px-4 md:py-12 md:px-6 w-full max-w-[1200px] mx-auto">
+    <main class="flex-1 flex flex-col items-center justify-start py-8 px-4 md:py-12 md:px-6 w-full max-w-[1200px] mx-auto">
         <!-- Stepper -->
-        <div class="w-full max-w-3xl mb-12">
-            <div class="flex items-center justify-between relative">
+        <div class="w-full max-w-3xl mb-16">
+            <div class="flex items-center justify-between relative px-2">
                 <!-- Line background -->
-                <div
-                    class="absolute left-0 top-1/2 w-full h-1 bg-gray-200 dark:bg-gray-700 -z-10 -translate-y-1/2 rounded-full">
-                </div>
-                <div class="absolute left-0 top-1/2 w-1/3 h-1 bg-primary -z-0 -translate-y-1/2 rounded-full"></div>
+                <div class="absolute left-0 top-1/2 w-full h-[2px] bg-slate-200 dark:bg-slate-700 -z-10 -translate-y-1/2 rounded-full"></div>
+                <div class="absolute left-0 top-1/2 w-1/3 h-[2px] bg-primary -z-0 -translate-y-1/2 rounded-full shadow-[0_0_8px_rgba(74,143,217,0.4)]"></div>
+                
                 <!-- Step 1: Completed -->
-                <div class="flex flex-col items-center gap-2">
-                    <div
-                        class="size-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm shadow-md ring-4 ring-white dark:ring-[#121920]">
-                        <span class="material-symbols-outlined !text-lg">check</span>
+                <div class="flex flex-col items-center gap-3 relative">
+                    <div class="size-10 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-primary/20 ring-4 ring-background-light dark:ring-background-dark transition-all duration-300">
+                        <span class="material-symbols-outlined !text-xl">check</span>
                     </div>
-                    <span class="text-xs font-medium text-primary hidden sm:block absolute -bottom-6">Select
-                        Platform</span>
+                    <span class="text-[11px] uppercase tracking-wider font-bold text-primary absolute -bottom-8 whitespace-nowrap hidden sm:block">Select Platform</span>
                 </div>
+                
                 <!-- Step 2: Active -->
-                <div class="flex flex-col items-center gap-2">
-                    <div
-                        class="size-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm shadow-md ring-4 ring-white dark:ring-[#121920]">
-                        2
+                <div class="flex flex-col items-center gap-3 relative">
+                    <div class="size-10 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-primary/30 ring-4 ring-background-light dark:ring-background-dark transition-all duration-300 {{ !in_array($subcriber->status, ['ready', 'authenticated', 'connected', 'qr_ready']) ? 'animate-pulse' : '' }}">
+                        @if(in_array($subcriber->status, ['ready', 'authenticated', 'connected', 'qr_ready']))
+                            <span class="material-symbols-outlined !text-xl">check</span>
+                        @else
+                            2
+                        @endif
                     </div>
-                    <span
-                        class="text-xs font-bold text-[#121417] dark:text-white hidden sm:block absolute -bottom-6">Scan
-                        QR</span>
+                    <span class="text-[11px] uppercase tracking-wider font-bold text-slate-800 dark:text-slate-100 absolute -bottom-8 whitespace-nowrap hidden sm:block">Scan QR</span>
                 </div>
+                
                 <!-- Step 3: Inactive -->
-                <div class="flex flex-col items-center gap-2">
-                    <div
-                        class="size-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 flex items-center justify-center font-bold text-sm ring-4 ring-white dark:ring-[#121920]">
-                        3
+                <div class="flex flex-col items-center gap-3 relative">
+                    <div class="size-10 rounded-full {{ in_array($subcriber->status, ['ready', 'authenticated', 'connected']) ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400' }} flex items-center justify-center font-bold text-sm ring-4 ring-background-light dark:ring-background-dark transition-all duration-300">
+                        @if(in_array($subcriber->status, ['ready', 'authenticated', 'connected']))
+                            <span class="material-symbols-outlined !text-xl">check</span>
+                        @else
+                            3
+                        @endif
                     </div>
-                    <span
-                        class="text-xs font-medium text-gray-400 hidden sm:block absolute -bottom-6">Configuration</span>
+                    <span class="text-[11px] uppercase tracking-wider font-medium {{ in_array($subcriber->status, ['ready', 'authenticated', 'connected']) ? 'text-primary font-bold' : 'text-slate-400 dark:text-slate-500' }} absolute -bottom-8 whitespace-nowrap hidden sm:block">Configuration</span>
                 </div>
+                
                 <!-- Step 4: Inactive -->
-                <div class="flex flex-col items-center gap-2">
-                    <div
-                        class="size-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 flex items-center justify-center font-bold text-sm ring-4 ring-white dark:ring-[#121920]">
+                <div class="flex flex-col items-center gap-3 relative">
+                    <div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 flex items-center justify-center font-bold text-sm ring-4 ring-background-light dark:ring-background-dark transition-all duration-300">
                         4
                     </div>
-                    <span class="text-xs font-medium text-gray-400 hidden sm:block absolute -bottom-6">Done</span>
+                    <span class="text-[11px] uppercase tracking-wider font-medium text-slate-400 dark:text-slate-500 absolute -bottom-8 whitespace-nowrap hidden sm:block">Done</span>
                 </div>
             </div>
             <!-- Mobile Text Indicator -->
-            <div class="flex sm:hidden justify-center mt-6">
-                <span class="text-sm font-semibold text-gray-900 dark:text-white">Step 2: Scan QR Code</span>
+            <div class="flex sm:hidden justify-center mt-10">
+                <span class="px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest">
+                    @if(in_array($subcriber->status, ['ready', 'authenticated', 'connected']))
+                        Connected Successfully
+                    @else
+                        Step 2: Scan QR Code
+                    @endif
+                </span>
             </div>
         </div>
+
         <!-- Main Card -->
-        <div
-            class="bg-white dark:bg-[#1a222c] rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 overflow-hidden w-full max-w-5xl flex flex-col md:flex-row">
-            <!-- Left Side: QR Code -->
-            <div
-                class="w-full md:w-5/12 p-8 md:p-12 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-[#1a222c]">
-                <div class="relative group">
-                    <!-- QR Frame -->
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                        <img alt="QR Code for WhatsApp connection"
-                            class="w-56 h-56 md:w-64 md:h-64 object-contain opacity-90 group-hover:opacity-100 transition-opacity"
-                            data-alt="A QR code pattern"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxw1f1lKMXEWut_G-4S-VziG57T5l2-v0ABNKrDMXJjMLViUk5wz29AN-jYskRN4-PyUIswJfRewrS7RBN8eIwhvrdSYgpkvv6qUPTuUna-WkSRvBzYM0PjZ45GuCqK7rKev6_VMZZRDIZN9jeNkWxYV8t7kRKyt96bkB40cm0KSoeaxZcVfQr4oGvLyoUOl1_Z2yySuRuDHslM77bsa85tiLMQaXkcmh1I3dNMjp5KqD6hfRi4EXmJzlWeDgk9u56PQWmj8AlDy58" />
-                        <!-- Logo Overlay in QR center (simulated) -->
-                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div class="bg-white p-1 rounded-full shadow-sm">
-                                <span class="material-symbols-outlined text-[#25D366] !text-4xl">chat</span>
+        <div class="bg-white dark:bg-slate-900/50 backdrop-blur-xl rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800/50 overflow-hidden w-full max-w-5xl flex flex-col md:flex-row min-h-[500px]">
+            <!-- Left Side: QR Code Area -->
+            <div class="w-full md:w-5/12 p-8 md:p-12 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/20">
+                @if(in_array($subcriber->status, ['ready', 'authenticated', 'connected']))
+                    <div class="flex flex-col items-center animate-in fade-in zoom-in duration-700">
+                        <div class="size-42 rounded-full bg-emerald-500/10 flex items-center justify-center mb-6 ring-8 ring-emerald-500/5">
+                            <span class="material-symbols-outlined !text-7xl text-emerald-500">check_circle</span>
+                        </div>
+                        <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-2">Authenticated!</h2>
+                        <p class="text-slate-500 dark:text-slate-400 text-center text-sm font-medium">Your WhatsApp account is successfully linked and ready to use.</p>
+                        
+                        <div class="mt-8 p-4 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 w-full text-center">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Session ID</p>
+                            <code class="text-xs text-primary font-bold">{{ $subcriber->session }}</code>
+                        </div>
+
+                        <a href="{{ route('admin.whstapp-subscribers.index') }}" class="mt-8 px-8 py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-all">
+                            Go to Dashboard
+                        </a>
+                    </div>
+                @else
+                    <div class="relative group">
+                        <!-- QR Frame with Gradient Glow -->
+                        <div class="absolute -inset-4 qr-gradient-border opacity-50 blur-xl rounded-full group-hover:opacity-100 transition duration-700"></div>
+                        
+                        <div class="relative bg-white p-6 rounded-2xl shadow-2xl ring-1 ring-slate-200 dark:ring-slate-700 transition-transform duration-500 group-hover:scale-[1.02]">
+                            <div class="relative flex items-center justify-center min-w-[200px] min-h-[200px]">
+                                @if($subcriber->qr)
+                                    <div id="qrcode" class="w-52 h-52 md:w-60 md:h-60 flex items-center justify-center"></div>
+                                @else
+                                    <div class="w-52 h-52 md:w-60 md:h-60 flex flex-col items-center justify-center text-slate-300">
+                                        <span class="material-symbols-outlined !text-6xl animate-pulse">qr_code_2</span>
+                                        <p class="text-xs font-bold mt-4 animate-pulse uppercase tracking-widest text-slate-400">Generating...</p>
+                                    </div>
+                                @endif
+                                
+                                <!-- Logo Overlay -->
+                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <div class="bg-white p-2 rounded-xl shadow-lg border border-slate-50">
+                                        <svg class="w-8 h-8 text-[#25D366]" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.658 1.43 5.623 1.432h.006c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Pulsing Status -->
+                        <div class="absolute -top-1 -right-1 flex items-center justify-center">
+                            <div class="relative w-5 h-5">
+                                <span class="pulse-ring absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-5 w-5 bg-primary border-4 border-white dark:border-slate-900 shadow-sm"></span>
                             </div>
                         </div>
                     </div>
-                    <!-- Pulsing Status -->
-                    <div class="absolute -top-3 -right-3 flex items-center justify-center">
-                        <div class="relative w-4 h-4">
-                            <span
-                                class="pulse-ring absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-4 w-4 bg-primary"></span>
+
+                    <div class="mt-12 flex flex-col items-center gap-6 w-full text-center">
+                        <div class="flex items-center gap-2.5 {{ $subcriber->qr ? 'text-primary bg-primary/10 border-primary/20' : 'text-slate-400 bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700' }} px-5 py-2.5 rounded-full border backdrop-blur-sm">
+                            <span class="material-symbols-outlined !text-xl {{ !in_array($subcriber->status, ['authenticated', 'connected', 'ready']) ? 'animate-spin' : '' }}">sync</span>
+                            <span class="text-sm font-bold tracking-wide">
+                                @if($subcriber->status == 'qr_ready')
+                                    QR Code Ready
+                                @elseif($subcriber->status == 'waiting_qr')
+                                    Generating QR...
+                                @else
+                                    {{ ucfirst(str_replace('_', ' ', $subcriber->status ?? 'Initializing')) }}
+                                @endif
+                            </span>
                         </div>
+                        
+                        <div class="text-center rounded-2xl bg-slate-100/50 dark:bg-slate-800/40 p-4 border border-slate-100 dark:border-slate-800 w-full max-w-[200px]">
+                            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest mb-1">Status</p>
+                            <p class="text-xl font-black text-slate-800 dark:text-white truncate" title="{{ $subcriber->status }}">
+                                {{ $subcriber->status == 'qr_ready' ? 'READY' : (strtoupper($subcriber->status) ?: 'WAITING') }}
+                            </p>
+                        </div>
+
+                        <button onclick="window.location.reload()" class="flex items-center gap-2 text-sm font-semibold text-slate-400 dark:text-slate-500 hover:text-primary dark:hover:text-primary transition-all duration-300 group">
+                            <span class="material-symbols-outlined !text-lg group-hover:rotate-180 transition-transform duration-500">refresh</span>
+                            <span>Reload QR Code</span>
+                        </button>
                     </div>
-                </div>
-                <div class="mt-8 flex flex-col items-center gap-3 w-full">
-                    <div class="flex items-center gap-2 text-primary bg-primary/10 px-4 py-2 rounded-full">
-                        <span class="material-symbols-outlined !text-xl animate-spin">sync</span>
-                        <span class="text-sm font-semibold">Waiting for scan...</span>
-                    </div>
-                    <div class="text-center mt-2">
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Code expires in</p>
-                        <p class="text-2xl font-bold text-[#121417] dark:text-white tabular-nums tracking-tight">2:45
-                        </p>
-                    </div>
-                    <button
-                        class="mt-4 text-sm font-medium text-gray-400 hover:text-primary transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined !text-base">refresh</span>
-                        Reload QR Code
-                    </button>
-                </div>
+                @endif
             </div>
-            <!-- Right Side: Instructions -->
-            <div class="w-full md:w-7/12 p-8 md:p-12 flex flex-col justify-center">
-                <div class="mb-8">
-                    <h1 class="text-2xl md:text-3xl font-bold text-[#121417] dark:text-white mb-3">Connect WhatsApp</h1>
-                    <p class="text-gray-500 dark:text-gray-400 text-base leading-relaxed">
-                        To sync your conversations and contacts, link your WhatsApp account using the QR code.
+
+            <!-- Right Side: Instructions Area -->
+            <div class="w-full md:w-7/12 p-8 md:p-14 flex flex-col justify-center bg-white dark:bg-slate-900/40">
+                <div class="mb-12">
+                    <div
+                        class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4 border border-emerald-500/20">
+                        <span class="material-symbols-outlined !text-sm">verified_user</span>
+                        Secure Connection
+                    </div>
+                    <h1
+                        class="text-3xl md:text-4xl font-black text-slate-800 dark:text-white mb-4 tracking-tight leading-tight">
+                        Link your <span class="text-[#25D366]">WhatsApp</span></h1>
+                    <p class="text-slate-500 dark:text-slate-400 text-lg leading-relaxed max-w-md font-medium">
+                        Sync your conversations and automate your workflow in seconds.
                     </p>
                 </div>
-                <div class="space-y-6">
+
+                <div class="space-y-8 relative">
+                    <!-- Vertical Line Connector for Steps -->
+                    <div class="absolute left-5 top-10 bottom-10 w-[2px] bg-slate-100 dark:bg-slate-800/50"></div>
+
                     <!-- Step 1 -->
-                    <div class="flex gap-4 items-start">
-                        <div
-                            class="flex-shrink-0 size-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-[#121417] dark:text-white font-bold text-sm">
-                            1</div>
+                    <div class="flex gap-6 items-start relative z-10">
+                        <div class="flex-shrink-0 size-10 rounded-xl {{ !in_array($subcriber->status, ['ready', 'authenticated', 'connected', 'qr_ready']) ? 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white' : 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' }} flex items-center justify-center font-black text-sm ring-1 ring-slate-200 dark:ring-slate-700">
+                            @if(in_array($subcriber->status, ['authenticated', 'ready', 'connected', 'qr_ready']))
+                                <span class="material-symbols-outlined !text-xl">check</span>
+                            @else
+                                1
+                            @endif
+                        </div>
                         <div>
-                            <h3 class="font-semibold text-[#121417] dark:text-white text-lg">Open WhatsApp</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Open WhatsApp on your primary
-                                phone.</p>
+                            <h3 class="font-bold text-slate-800 dark:text-white text-lg">Open WhatsApp</h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium italic">Open WhatsApp on your primary phone.</p>
                         </div>
                     </div>
+
                     <!-- Step 2 -->
-                    <div class="flex gap-4 items-start">
-                        <div
-                            class="flex-shrink-0 size-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-[#121417] dark:text-white font-bold text-sm">
-                            2</div>
+                    <div class="flex gap-6 items-start relative z-10">
+                        <div class="flex-shrink-0 size-10 rounded-xl {{ !in_array($subcriber->status, ['authenticated', 'ready', 'connected']) ? 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white' : 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' }} flex items-center justify-center font-black text-sm ring-1 ring-slate-200 dark:ring-slate-700">
+                            @if(in_array($subcriber->status, ['authenticated', 'ready', 'connected']))
+                                <span class="material-symbols-outlined !text-xl">check</span>
+                            @else
+                                2
+                            @endif
+                        </div>
                         <div>
-                            <h3 class="font-semibold text-[#121417] dark:text-white text-lg">Go to Linked Devices</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                Tap <span class="font-medium text-[#121417] dark:text-gray-300">Menu</span>
-                                <span class="inline-flex align-middle"><span
-                                        class="material-symbols-outlined !text-base mx-1 text-gray-400">more_vert</span></span>
-                                on Android or <span
-                                    class="font-medium text-[#121417] dark:text-gray-300">Settings</span>
-                                <span class="inline-flex align-middle"><span
-                                        class="material-symbols-outlined !text-base mx-1 text-gray-400">settings</span></span>
-                                on iPhone.
-                            </p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Select <span
-                                    class="text-[#25D366] font-medium">Linked Devices</span> and tap on <span
-                                    class="font-medium text-[#121417] dark:text-gray-300">Link a Device</span>.</p>
+                            <h3 class="font-bold text-slate-800 dark:text-white text-lg">Go to Linked Devices</h3>
+                            <div class="text-sm text-slate-500 dark:text-slate-400 mt-2 space-y-2 font-medium">
+                                <p>Tap <span class="text-slate-900 dark:text-slate-200 font-black">Menu</span> <span class="inline-flex align-middle bg-slate-100 dark:bg-slate-800 px-1 rounded"><span class="material-symbols-outlined !text-base text-slate-400">more_vert</span></span> or <span class="text-slate-900 dark:text-slate-200 font-black">Settings</span> <span class="inline-flex align-middle bg-slate-100 dark:bg-slate-800 px-1 rounded"><span class="material-symbols-outlined !text-base text-slate-400">settings</span></span></p>
+                                <p>Select <span class="text-[#25D366] font-black">Linked Devices</span> and then <span class="text-slate-900 dark:text-slate-200 font-black underline decoration-primary/30 underline-offset-4">Link a Device</span>.</p>
+                            </div>
                         </div>
                     </div>
+
                     <!-- Step 3 -->
-                    <div class="flex gap-4 items-start">
-                        <div
-                            class="flex-shrink-0 size-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-[#121417] dark:text-white font-bold text-sm">
-                            3</div>
+                    <div class="flex gap-6 items-start relative z-10">
+                        <div class="flex-shrink-0 size-10 rounded-xl {{ in_array($subcriber->status, ['authenticated', 'ready', 'connected']) ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-slate-100 dark:bg-slate-800' }} flex items-center justify-center text-slate-800 dark:text-white font-black text-sm ring-1 ring-slate-200 dark:ring-slate-700">
+                             @if(in_array($subcriber->status, ['authenticated', 'ready', 'connected']))
+                                <span class="material-symbols-outlined !text-xl">check</span>
+                            @else
+                                3
+                            @endif
+                        </div>
                         <div>
-                            <h3 class="font-semibold text-[#121417] dark:text-white text-lg">Point your phone to this
-                                screen</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Capture the code to log in.</p>
+                            <h3 class="font-bold text-slate-800 dark:text-white text-lg">Scan this Code</h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Point your phone camera to this screen to authenticate.</p>
                         </div>
                     </div>
                 </div>
+
                 <div
-                    class="mt-10 pt-6 border-t border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row gap-4 justify-between items-center">
-                    <div class="flex items-center gap-2 text-xs text-gray-400">
-                        <span class="material-symbols-outlined !text-base">lock</span>
-                        <span>End-to-end encrypted connection</span>
+                    class="mt-14 pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row gap-6 justify-between items-center">
+                    <div class="flex items-center gap-3 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                        <span class="material-symbols-outlined !text-lg text-emerald-500">lock</span>
+                        <span>End-to-end encrypted</span>
                     </div>
-                    <div class="flex gap-4 w-full sm:w-auto">
+                    <div class="flex gap-3 w-full sm:w-auto">
                         <button
-                            class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                            class="flex-1 sm:flex-none px-8 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 active:scale-95">
                             Cancel
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+
         <!-- Help Footer -->
-        <div class="mt-8 text-center">
-            <p class="text-sm text-gray-500 dark:text-gray-400">
+        <div class="mt-12 text-center group cursor-pointer">
+            <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">
                 Having trouble linking?
-                <a class="text-primary font-medium hover:underline" href="#">Read the connection guide</a>
+                <a class="text-primary font-bold hover:text-primary/80 transition-colors ml-1 inline-flex items-center gap-1 border-b border-primary/20 hover:border-primary transition-all"
+                    href="#">
+                    Read the connection guide
+                    <span class="material-symbols-outlined !text-base">arrow_forward</span>
+                </a>
             </p>
         </div>
     </main>
-</body>
+@endsection
 
-</html>
+@section('scripts')
+    @parent
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if($subcriber->qr && !in_array($subcriber->status, ['authenticated', 'ready', 'connected']))
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: `{!! $subcriber->qr !!}`,
+                width: 256,
+                height: 256,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+            @endif
+
+            const subscriberId = "{{ $subcriber->id }}";
+            const statusUrl = "{{ route('admin.whstapp-subscribers.status') }}";
+            let pollInterval;
+
+            function checkStatus() {
+                fetch(`${statusUrl}?subscriber_id=${subscriberId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.ok) {
+                            if (['authenticated', 'ready', 'connected'].includes(data.status)) {
+                                clearInterval(pollInterval);
+                                window.location.reload();
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Status polling error:', error));
+            }
+
+            @if(!in_array($subcriber->status, ['authenticated', 'ready', 'connected']))
+            pollInterval = setInterval(checkStatus, 3000);
+            @endif
+        });
+    </script>
+@endsection
