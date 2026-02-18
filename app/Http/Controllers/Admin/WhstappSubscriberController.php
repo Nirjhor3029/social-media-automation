@@ -102,12 +102,14 @@ class WhstappSubscriberController extends Controller
         $subscriber_id = $request->subscriber_id ?? null;
         $authUser = Auth::user();
 
-        if (!isset($authUser->phone)) {
+        if (!isset($authUser->phone) || $authUser->phone == '') {
             return Redirect::back()->with('warning', 'Please update your phone number first.');
         }
 
         if ($subscriber_id == null) {
-            $subcriber = WhstappSubscriber::where('phone', $authUser->phone)->first();
+            $subcriber = WhstappSubscriber::whereNotNull('phone')
+                ->where('phone', $authUser->phone)
+                ->first();
             if (!isset($subcriber)) {
                 $subcriber = new WhstappSubscriber();
                 $subcriber->name = $authUser->name;
