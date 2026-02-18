@@ -159,26 +159,50 @@ class WhatsappGroupController extends Controller
         ]);
 
         $subscriber = WhstappSubscriber::findOrFail($request->subscriber_id);
+        $baseUrl = env('SMA_BASE_URL', 'http://localhost:3000');
 
-        try {
-            $baseUrl = env('SMA_BASE_URL', 'http://localhost:3000');
-            $response = \Illuminate\Support\Facades\Http::post($baseUrl . "/api/groups/send", [
-                'sessionId' => $subscriber->session,
-                'groupJids' => $request->group_jids,
-                'text' => $request->message,
-                'delayMs' => 1500,
-                'jitterMs' => 500
-            ]);
+        $successCount = 0;
+        $failCount = 0;
 
-            if ($response->successful()) {
-                return redirect()->route('admin.whatsapp-groups.index')->with('success', 'Broadcast sent successfully!');
+        foreach ($request->group_jids as $jid) {
+            $group = WhatsappGroup::where('group_identification', $jid)->first();
+            $groupName = $group ? ($group->subject ?: $group->title) : 'Group';
+
+            // Personalize message
+            $personalizedMessage = str_replace('[Group Name]', $groupName, $request->message);
+
+            try {
+                $response = \Illuminate\Support\Facades\Http::post($baseUrl . "/api/groups/send", [
+                    'sessionId' => $subscriber->session,
+                    'groupJids' => [$jid],
+                    'text' => $personalizedMessage,
+                    'delayMs' => 1500,
+                    'jitterMs' => 500
+                ]);
+
+                if ($response->successful()) {
+                    $successCount++;
+                } else {
+                    $failCount++;
+                }
+            } catch (\Exception $e) {
+                $failCount++;
+                \Illuminate\Support\Facades\Log::error("Broadcast individual send error ($jid): " . $e->getMessage());
             }
-
-            $error = $response->json();
-            return back()->with('error', $error['message'] ?? 'Failed to send broadcast.');
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Broadcast Send Error: ' . $e->getMessage());
-            return back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
+
+        $subscriber = WhstappSubscriber::findOrFail($request->subscriber_id);
+        $groups = WhatsappGroup::whereIn('group_identification', $request->group_jids)->get();
+
+        if ($failCount === 0) {
+            session()->flash('success', "Broadcast sent successfully to all $successCount groups!");
+        } else {
+            session()->flash('success', "Broadcast completed. Success: $successCount, Failed: $failCount");
+            if ($successCount === 0) {
+                session()->flash('error', "Could not send broadcast to any selected groups.");
+            }
+        }
+
+        return view('admin.whatsappGroups.broadcast', compact('subscriber', 'groups'));
     }
 }

@@ -23,8 +23,16 @@
         <!-- Main Content -->
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
             <div class="mx-auto max-w-4xl">
+                @if(session('success'))
+                    <div
+                        class="mb-6 flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-4 text-green-700 dark:border-green-900/30 dark:bg-green-900/20 dark:text-green-400">
+                        <span class="material-symbols-outlined">check_circle</span>
+                        <p class="text-sm font-medium">{{ session('success') }}</p>
+                    </div>
+                @endif
                 @if(session('error'))
-                    <div class="mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-900/30 dark:bg-red-900/20 dark:text-red-400">
+                    <div
+                        class="mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-900/30 dark:bg-red-900/20 dark:text-red-400">
                         <span class="material-symbols-outlined">error</span>
                         <p class="text-sm font-medium">{{ session('error') }}</p>
                     </div>
@@ -43,16 +51,40 @@
                                     <h3 class="text-base font-bold text-slate-900 dark:text-white">Compose Message</h3>
                                     <span class="text-xs text-slate-400" id="char-count">0 characters</span>
                                 </div>
+                                <!-- Formatting Toolbar -->
+                                <div
+                                    class="mb-3 flex flex-wrap items-center gap-1 border-b border-slate-100 pb-2 dark:border-slate-800">
+                                    <button type="button" data-style="*"
+                                        class="format-btn flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800"
+                                        title="Bold">
+                                        <span class="material-symbols-outlined text-[20px]">format_bold</span>
+                                    </button>
+                                    <button type="button" data-style="_"
+                                        class="format-btn flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800"
+                                        title="Italic">
+                                        <span class="material-symbols-outlined text-[20px]">format_italic</span>
+                                    </button>
+                                    <button type="button" data-style="~"
+                                        class="format-btn flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800"
+                                        title="Strikethrough">
+                                        <span class="material-symbols-outlined text-[20px]">format_strikethrough</span>
+                                    </button>
+                                    <button type="button" data-style="```"
+                                        class="format-btn flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800"
+                                        title="Monospace">
+                                        <span class="material-symbols-outlined text-[20px]">code</span>
+                                    </button>
+                                    <div class="mx-1 h-4 w-[1px] bg-slate-200 dark:bg-slate-700"></div>
+                                    <button type="button"
+                                        class="insert-placeholder flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-bold text-primary hover:bg-primary/10">
+                                        <span class="material-symbols-outlined text-[16px]">person_add</span>
+                                        [Group Name]
+                                    </button>
+                                </div>
                                 <textarea name="message" id="message-text" rows="10"
                                     class="block w-full rounded-xl border-slate-200 bg-slate-50 p-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500"
                                     placeholder="Type your message here... You can use emojis and line breaks."
                                     required></textarea>
-                                <div class="mt-4 flex flex-wrap gap-2">
-                                    <button type="button"
-                                        class="insert-placeholder rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
-                                        [Group Name]
-                                    </button>
-                                </div>
                             </div>
 
                             <!-- Preview (Optional) -->
@@ -81,7 +113,8 @@
                                     </div>
                                     <div class="overflow-hidden">
                                         <div class="truncate text-sm font-bold text-slate-900 dark:text-white">
-                                            {{ $subscriber->phone }}</div>
+                                            {{ $subscriber->phone }}
+                                        </div>
                                         <div class="truncate text-xs text-slate-500">{{ $subscriber->name }}</div>
                                     </div>
                                 </div>
@@ -148,16 +181,55 @@
             const $overlay = $('#sending-overlay');
 
             // Update preview and count
-            $textarea.on('input', function () {
-                const text = $(this).val();
-                $preview.text(text || 'Your message preview will appear here...');
+            function updatePreview() {
+                let text = $textarea.val();
                 $charCount.text(text.length + ' characters');
 
-                if (text) {
-                    $preview.removeClass('italic text-slate-400').addClass('text-slate-700 dark:text-slate-300');
-                } else {
-                    $preview.addClass('italic text-slate-400').removeClass('text-slate-700 dark:text-slate-300');
+                if (!text) {
+                    $preview.html('Your message preview will appear here...')
+                        .addClass('italic text-slate-400').removeClass('text-slate-900 dark:text-white');
+                    return;
                 }
+
+                $preview.removeClass('italic text-slate-400').addClass('text-slate-900 dark:text-white');
+
+                // Basic WhatsApp Markdown Parser for Preview
+                let html = text
+                    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") // Escape HTML
+                    .replace(/\*(.*?)\*/g, '<strong>$1</strong>') // Bold
+                    .replace(/_(.*?)_/g, '<em>$1</em>') // Italic
+                    .replace(/~(.*?)~/g, '<del>$1</del>') // Strikethrough
+                    .replace(/```(.*?)```/gs, '<code class="bg-slate-200 dark:bg-slate-700 px-1 rounded">$1</code>') // Monospace
+                    .replace(/\n/g, '<br>'); // Newlines
+
+                $preview.html(html);
+            }
+
+            $textarea.on('input', updatePreview);
+
+            // Formatting Buttons Logic
+            $('.format-btn').on('click', function () {
+                const style = $(this).data('style');
+                const startPos = $textarea.prop('selectionStart');
+                const endPos = $textarea.prop('selectionEnd');
+                const text = $textarea.val();
+                const selectedText = text.substring(startPos, endPos);
+
+                let replacement = '';
+                if (style === '```') {
+                    replacement = '```' + (selectedText || 'text') + '```';
+                } else {
+                    replacement = style + (selectedText || 'text') + style;
+                }
+
+                const newText = text.substring(0, startPos) + replacement + text.substring(endPos);
+                $textarea.val(newText).focus();
+
+                // Set cursor position after the styling
+                const newCursorPos = startPos + replacement.length;
+                $textarea[0].setSelectionRange(newCursorPos, newCursorPos);
+
+                updatePreview();
             });
 
             // Form submission overlay
@@ -165,13 +237,20 @@
                 $overlay.removeClass('hidden').addClass('flex');
             });
 
-            // Placeholder insertion logic (simplified)
+            // Placeholder insertion logic
             $('.insert-placeholder').on('click', function () {
-                const placeholder = $(this).text().trim();
-                const cursorPos = $textarea.prop('selectionStart');
+                const placeholder = "[Group Name]";
+                const startPos = $textarea.prop('selectionStart');
+                const endPos = $textarea.prop('selectionEnd');
                 const text = $textarea.val();
-                const newText = text.substring(0, cursorPos) + placeholder + text.substring(cursorPos);
-                $textarea.val(newText).trigger('input').focus();
+
+                const newText = text.substring(0, startPos) + placeholder + text.substring(endPos);
+                $textarea.val(newText).focus();
+
+                const newCursorPos = startPos + placeholder.length;
+                $textarea[0].setSelectionRange(newCursorPos, newCursorPos);
+
+                updatePreview();
             });
         });
     </script>
