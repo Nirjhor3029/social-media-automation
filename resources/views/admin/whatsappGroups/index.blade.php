@@ -41,7 +41,27 @@
             </div>
         </header>
         <!-- Scrollable Content Area -->
-        <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+        <form id="broadcast-form" action="{{ route('admin.whatsapp-groups.broadcast-form') }}" method="POST"
+            class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            @csrf
+
+            @if(session('success'))
+                <div
+                    class="mb-6 flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-4 text-green-700 dark:border-green-900/30 dark:bg-green-900/20 dark:text-green-400">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    <p class="text-sm font-medium">{{ session('success') }}</p>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div
+                    class="mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-900/30 dark:bg-red-900/20 dark:text-red-400">
+                    <span class="material-symbols-outlined">error</span>
+                    <p class="text-sm font-medium">{{ session('error') }}</p>
+                </div>
+            @endif
+
+            <input type="hidden" name="subscriber_id" id="form-subscriber-id" value="">
             <!-- Filters & Actions -->
             <div class="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
                 <div class="flex w-full flex-col gap-4 sm:w-auto lg:flex-row lg:items-end">
@@ -54,16 +74,23 @@
                             class="block w-full rounded-lg border-0 py-2.5 pl-10 ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary dark:bg-slate-800 dark:ring-slate-700 dark:text-white sm:text-sm sm:leading-6"
                             id="search" name="search" placeholder="Search by name or number..." type="text" />
                     </div>
-                    <div class="w-full sm:w-56">
-                        <select
-                            class="block w-full rounded-lg border-0 py-2.5 pl-3 pr-10 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary dark:bg-slate-800 dark:ring-slate-700 dark:text-white sm:text-sm sm:leading-6"
-                            id="number-filter" name="number-filter">
-                            <option value="">All Connected Numbers</option>
-                            @foreach($subscribers as $subscriber)
-                                <option value="{{ $subscriber->id }}">{{ $subscriber->phone }} ({{ $subscriber->name }})
-                                </option>
-                            @endforeach
-                        </select>
+                    <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+                        <div class="w-full sm:w-64">
+                            <select
+                                class="block w-full rounded-lg border-0 py-2.5 pl-3 pr-10 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary dark:bg-slate-800 dark:ring-slate-700 dark:text-white sm:text-sm sm:leading-6"
+                                id="number-filter" name="number-filter">
+                                <option value="">All Connected Numbers</option>
+                                @foreach($subscribers as $subscriber)
+                                    <option value="{{ $subscriber->id }}">{{ $subscriber->phone }} ({{ $subscriber->name }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button type="button" id="sync-now-btn"
+                            class="flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all active:scale-95">
+                            <span class="material-symbols-outlined text-[18px]">sync</span>
+                            <span class="whitespace-nowrap">Sync Now</span>
+                        </button>
                     </div>
                 </div>
                 <!-- View Toggle -->
@@ -97,7 +124,7 @@
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                 @forelse($whatsappGroups as $group)
                     <div
-                        class="group relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:border-primary hover:shadow-md dark:border-slate-700 dark:bg-[#1a222c] dark:hover:border-primary">
+                        class="group-card group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:border-primary hover:shadow-md dark:border-slate-700 dark:bg-[#1a222c] dark:hover:border-primary">
                         <div class="absolute right-3 top-3 opacity-0 transition-opacity group-hover:opacity-100">
                             <input
                                 class="h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700"
@@ -144,6 +171,7 @@
                 </button>
             </div>
             <div class="h-20"></div> <!-- Spacer for FAB -->
+        </form>
         </div>
         <!-- Floating Action Bar -->
         <div id="floating-bar"
@@ -155,7 +183,7 @@
                     <span>Ready to broadcast to</span>
                     <span id="floating-selected-count" class="font-bold text-white dark:text-black">0 selected groups</span>
                 </div>
-                <button
+                <button type="button" id="submit-broadcast"
                     class="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-primary/30">
                     <span>Send Broadcast</span>
                     <span class="material-symbols-outlined text-[18px]">send</span>
@@ -188,6 +216,23 @@
 
             function updateSelection() {
                 const checkedCount = $checkboxes.filter(':checked').length;
+
+                // Update visual state of cards
+                $('.group-card').each(function () {
+                    const $card = $(this);
+                    const isChecked = $card.find('input[name="ids[]"]').is(':checked');
+
+                    if (isChecked) {
+                        $card.addClass('border-primary bg-primary/5 dark:bg-primary/10 ring-1 ring-primary/20')
+                            .removeClass('border-slate-200 dark:border-slate-700');
+                        $card.find('.absolute').removeClass('opacity-0'); // Show checkbox
+                    } else {
+                        $card.removeClass('border-primary bg-primary/5 dark:bg-primary/10 ring-1 ring-primary/20')
+                            .addClass('border-slate-200 dark:border-slate-700');
+                        $card.find('.absolute').addClass('opacity-0'); // Hide checkbox unless hovered (default behavior)
+                    }
+                });
+
                 if (checkedCount > 0) {
                     $summary.removeClass('hidden').addClass('flex');
                     $floatingBar.removeClass('hidden').addClass('flex');
@@ -198,6 +243,14 @@
                     $floatingBar.addClass('hidden').removeClass('flex');
                 }
             }
+
+            $('.group-card').on('click', function (e) {
+                // Prevent toggle if clicking on other interactive elements if needed
+                if (!$(e.target).closest('input[type="checkbox"]').length) {
+                    const $cb = $(this).find('input[name="ids[]"]');
+                    $cb.prop('checked', !$cb.is(':checked')).trigger('change');
+                }
+            });
 
             $checkboxes.on('change', updateSelection);
 
@@ -214,36 +267,16 @@
                 });
             });
 
-            // Handle Refresh Button
-            $('#refresh-groups-btn').on('click', function() {
+            // Handle Syncing (Common Logic)
+            function performSync() {
                 const subscriberId = $('#number-filter').val();
                 if (!subscriberId) {
-                    alert('Please select a connected number first to sync groups.');
+                    alert('Please select a WhatsApp number first to sync groups.');
                     return;
                 }
-                $(this).addClass('animate-spin'); // Optional micro-animation
-                $('#number-filter').trigger('change');
-            });
-
-            // Handle Number Filter & Manual Sync
-            $('#number-filter').on('change', function () {
-                const subscriberId = $(this).val();
-
-                // If "All" is selected, just filter locally
-                if (!subscriberId) {
-                    $('.grid > div').show();
-                    return;
-                }
-
-                // Filtering locally (existing logic)
-                const phoneValue = $(this).find('option:selected').text().split(' ')[0].toLowerCase();
-                $('.grid > div').filter(function () {
-                    $(this).toggle($(this).find('.inline-flex').text().toLowerCase().indexOf(phoneValue) > -1)
-                });
-
-                // Proactive Sync for the selected subscriber
+                
                 $('#sync-loader').removeClass('hidden').addClass('flex');
-
+                
                 $.ajax({
                     url: "{{ route('admin.whatsapp-groups.sync') }}",
                     method: 'POST',
@@ -251,21 +284,65 @@
                         _token: "{{ csrf_token() }}",
                         subscriber_id: subscriberId
                     },
-                    success: function (response) {
+                    success: function(response) {
                         if (response.ok) {
-                            // Reload to show new groups
                             window.location.reload();
                         } else {
                             $('#sync-loader').addClass('hidden').removeClass('flex');
                             alert(response.message || 'Sync failed');
                         }
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         $('#sync-loader').addClass('hidden').removeClass('flex');
                         const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred during sync';
                         alert(errorMsg);
                     }
                 });
+            }
+
+            $('#refresh-groups-btn, #sync-now-btn').on('click', performSync);
+
+            // Handle Number Filter (Local only)
+            $('#number-filter').on('change', function () {
+                const subscriberId = $(this).val();
+                $('#form-subscriber-id').val(subscriberId); // Vital for broadcast form
+
+                if (!subscriberId) {
+                    $('.group-card').show(); // Show all group cards
+                    return;
+                }
+
+                const selectedText = $(this).find('option:selected').text().split(' ')[0].toLowerCase().trim();
+
+                $('.group-card').each(function () {
+                    const cardPhone = $(this).find('.inline-flex').text().toLowerCase().trim();
+                    if (cardPhone.indexOf(selectedText) !== -1) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+
+            // Initial sync of the hidden field if a filter is already selected (e.g. browser back)
+            $('#form-subscriber-id').val($('#number-filter').val());
+
+            // Handle Broadcast Submit
+            $('#submit-broadcast').on('click', function () {
+                const subscriberId = $('#form-subscriber-id').val();
+                const selectedGroups = $('input[name="ids[]"]:checked').length;
+
+                if (!subscriberId) {
+                    alert('Please select a WhatsApp number first.');
+                    return;
+                }
+
+                if (selectedGroups === 0) {
+                    alert('Please select at least one group to broadcast.');
+                    return;
+                }
+
+                $('#broadcast-form').submit();
             });
         });
     </script>

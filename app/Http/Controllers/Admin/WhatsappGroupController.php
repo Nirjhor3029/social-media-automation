@@ -134,4 +134,51 @@ class WhatsappGroupController extends Controller
 
         return response(null, Response::HTTP_NO_CONTENT);
     }
+
+    public function broadcastForm(Request $request)
+    {
+        $subscriberId = $request->subscriber_id;
+        $groupIds = $request->ids;
+
+        if (!$subscriberId || empty($groupIds)) {
+            return redirect()->back()->with('error', 'Please select a subscriber and at least one group.');
+        }
+
+        $subscriber = WhstappSubscriber::findOrFail($subscriberId);
+        $groups = WhatsappGroup::whereIn('id', $groupIds)->get();
+
+        return view('admin.whatsappGroups.broadcast', compact('subscriber', 'groups'));
+    }
+
+    public function sendBroadcast(Request $request)
+    {
+        $request->validate([
+            'subscriber_id' => 'required',
+            'group_jids' => 'required|array',
+            'message' => 'required|string',
+        ]);
+
+        $subscriber = WhstappSubscriber::findOrFail($request->subscriber_id);
+
+        try {
+            $baseUrl = env('SMA_BASE_URL', 'http://localhost:3000');
+            $response = \Illuminate\Support\Facades\Http::post($baseUrl . "/api/groups/send", [
+                'sessionId' => $subscriber->session,
+                'groupJids' => $request->group_jids,
+                'text' => $request->message,
+                'delayMs' => 1500,
+                'jitterMs' => 500
+            ]);
+
+            if ($response->successful()) {
+                return redirect()->route('admin.whatsapp-groups.index')->with('success', 'Broadcast sent successfully!');
+            }
+
+            $error = $response->json();
+            return back()->with('error', $error['message'] ?? 'Failed to send broadcast.');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Broadcast Send Error: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred: ' . $e->getMessage());
+        }
+    }
 }
