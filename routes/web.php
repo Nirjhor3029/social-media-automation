@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\WhstappSubscriberController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
 Route::redirect('/', '/login');
 Route::get('/home', function () {
     if (session('status')) {
@@ -36,6 +40,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('temnplates', 'TemnplateController');
 
     // Whstapp Subscriber
+    Route::get('whstapp-subscribers/connect',[WhstappSubscriberController::class,'connect'])->name('whstapp-subscribers.connect');
     Route::delete('whstapp-subscribers/destroy', 'WhstappSubscriberController@massDestroy')->name('whstapp-subscribers.massDestroy');
     Route::resource('whstapp-subscribers', 'WhstappSubscriberController');
 

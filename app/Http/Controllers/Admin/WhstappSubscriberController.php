@@ -8,9 +8,14 @@ use App\Http\Requests\StoreWhstappSubscriberRequest;
 use App\Http\Requests\UpdateWhstappSubscriberRequest;
 use App\Models\User;
 use App\Models\WhstappSubscriber;
-use Gate;
+// use Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Redirect;
 use Symfony\Component\HttpFoundation\Response;
+
+use function PHPUnit\Framework\isNull;
 
 class WhstappSubscriberController extends Controller
 {
@@ -84,5 +89,38 @@ class WhstappSubscriberController extends Controller
         }
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+
+
+
+    // New
+    public function connect(Request $request)
+    {
+        // abort_if(Gate::denies('whstapp_subscriber_connect'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        $subscriber_id = $request->subscriber_id ?? null;
+
+        $authUser = Auth::user();
+        //  return $authUser->phone;
+
+        if (!isset($authUser->phone)) {
+            return Redirect::back()->with('warning', 'Please update your phone number first.');
+        }
+        
+
+
+        if ($subscriber_id == null) {
+            $subcriber = WhstappSubscriber::where('phone', $authUser->phone)->first();
+            if (!isset($subcriber)) {
+                $subcriber = new WhstappSubscriber();
+                $subcriber->name = $authUser->name;
+                $subcriber->phone = $authUser->phone;
+                $subcriber->user_id = $authUser->id;
+                $subcriber->save();
+            }
+        }
+
+        return view('admin.whstappSubscribers.connect', compact('subcriber'));
     }
 }
