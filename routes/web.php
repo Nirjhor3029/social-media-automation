@@ -46,6 +46,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('whstapp-subscribers', 'WhstappSubscriberController');
 
     // Whatsapp Group
+    Route::post('whatsapp-groups/sync', 'WhatsappGroupController@syncGroups')->name('whatsapp-groups.sync');
     Route::delete('whatsapp-groups/destroy', 'WhatsappGroupController@massDestroy')->name('whatsapp-groups.massDestroy');
     Route::resource('whatsapp-groups', 'WhatsappGroupController');
 });

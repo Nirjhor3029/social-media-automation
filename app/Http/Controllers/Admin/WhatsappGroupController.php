@@ -19,41 +19,6 @@ class WhatsappGroupController extends Controller
         abort_if(Gate::denies('whatsapp_group_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $authUser = auth()->user();
-        $primarySubscriber = WhstappSubscriber::where('primary', 1)
-            ->where('user_id', $authUser->id)
-            ->first();
-
-        if ($primarySubscriber && $primarySubscriber->session) {
-            try {
-                $baseUrl = env('SMA_BASE_URL', 'http://localhost:3000');
-                $response = \Illuminate\Support\Facades\Http::get($baseUrl . "/api/groups/{$primarySubscriber->session}");
-
-                if ($response->successful()) {
-                    $data = $response->json();
-                    if (isset($data['ok']) && $data['ok'] && isset($data['groups'])) {
-                        foreach ($data['groups'] as $groupData) {
-                            WhatsappGroup::updateOrCreate(
-                                [
-                                    'whstapp_subscriber_id' => $primarySubscriber->id,
-                                    'group_identification' => $groupData['id'],
-                                ],
-                                [
-                                    'subject' => $groupData['subject'] ?? '',
-                                    'subject_owner' => $groupData['subjectOwner'] ?? null,
-                                    'subject_time' => $groupData['subjectTime'] ?? null,
-                                    'creation' => $groupData['creation'] ?? null,
-                                    'size' => $groupData['size'] ?? 0,
-                                    'title' => $groupData['subject'] ?? '',
-                                ]
-                            );
-                        }
-                    }
-                }
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error('WhatsApp Groups Sync Error: ' . $e->getMessage());
-            }
-        }
-
         $subscribers = WhstappSubscriber::where('user_id', $authUser->id)->get();
 
         $whatsappGroups = WhatsappGroup::with(['whstapp_subscriber'])
@@ -63,6 +28,48 @@ class WhatsappGroupController extends Controller
             ->get();
 
         return view('admin.whatsappGroups.index', compact('whatsappGroups', 'subscribers'));
+    }
+
+    public function syncGroups(Request $request)
+    {
+        $subscriberId = $request->subscriber_id;
+        $subscriber = WhstappSubscriber::find($subscriberId);
+
+        if (!$subscriber || !$subscriber->session) {
+            return response()->json(['ok' => false, 'message' => 'Valid subscriber session not found.'], 404);
+        }
+
+        try {
+            $baseUrl = env('SMA_BASE_URL', 'http://localhost:3000');
+            $response = \Illuminate\Support\Facades\Http::get($baseUrl . "/api/groups/{$subscriber->session}");
+
+            if ($response->successful()) {
+                $data = $response->json();
+                if (isset($data['ok']) && $data['ok'] && isset($data['groups'])) {
+                    foreach ($data['groups'] as $groupData) {
+                        WhatsappGroup::updateOrCreate(
+                            [
+                                'whstapp_subscriber_id' => $subscriber->id,
+                                'group_identification' => $groupData['id'],
+                            ],
+                            [
+                                'subject' => $groupData['subject'] ?? '',
+                                'subject_owner' => $groupData['subjectOwner'] ?? null,
+                                'subject_time' => $groupData['subjectTime'] ?? null,
+                                'creation' => $groupData['creation'] ?? null,
+                                'size' => $groupData['size'] ?? 0,
+                                'title' => $groupData['subject'] ?? '',
+                            ]
+                        );
+                    }
+                    return response()->json(['ok' => true, 'message' => 'Groups synced successfully.']);
+                }
+            }
+            return response()->json(['ok' => false, 'message' => 'Failed to fetch groups from API.'], 400);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('WhatsApp Groups Sync Error: ' . $e->getMessage());
+            return response()->json(['ok' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 
     public function create()

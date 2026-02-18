@@ -28,11 +28,11 @@
                 </span>
             </div>
             <div class="flex items-center gap-3">
-                <a href="{{ route('admin.whatsapp-groups.index') }}"
+                <button id="refresh-groups-btn"
                     class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
                     <span class="material-symbols-outlined text-[18px]">refresh</span>
                     <span class="hidden sm:inline">Refresh Groups</span>
-                </a>
+                </button>
                 <button
                     class="relative rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800">
                     <span class="material-symbols-outlined">notifications</span>
@@ -162,6 +162,18 @@
                 </button>
             </div>
         </div>
+        <!-- Sync Loading Overlay -->
+        <div id="sync-loader"
+            class="hidden fixed inset-0 z-[100] items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+            <div class="flex flex-col items-center gap-4 rounded-2xl bg-white p-8 shadow-2xl dark:bg-[#1a222c]">
+                <div class="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                <div class="text-center">
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">Syncing Groups</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Please wait while we fetch groups from WhatsApp...
+                    </p>
+                </div>
+            </div>
+        </div>
     </main>
 @endsection
 @section('scripts')
@@ -202,15 +214,57 @@
                 });
             });
 
-            // Handle Number Filter
+            // Handle Refresh Button
+            $('#refresh-groups-btn').on('click', function() {
+                const subscriberId = $('#number-filter').val();
+                if (!subscriberId) {
+                    alert('Please select a connected number first to sync groups.');
+                    return;
+                }
+                $(this).addClass('animate-spin'); // Optional micro-animation
+                $('#number-filter').trigger('change');
+            });
+
+            // Handle Number Filter & Manual Sync
             $('#number-filter').on('change', function () {
-                const value = $(this).find('option:selected').text().split(' ')[0].toLowerCase();
-                if (!$(this).val()) {
+                const subscriberId = $(this).val();
+
+                // If "All" is selected, just filter locally
+                if (!subscriberId) {
                     $('.grid > div').show();
                     return;
                 }
+
+                // Filtering locally (existing logic)
+                const phoneValue = $(this).find('option:selected').text().split(' ')[0].toLowerCase();
                 $('.grid > div').filter(function () {
-                    $(this).toggle($(this).find('.inline-flex').text().toLowerCase().indexOf(value) > -1)
+                    $(this).toggle($(this).find('.inline-flex').text().toLowerCase().indexOf(phoneValue) > -1)
+                });
+
+                // Proactive Sync for the selected subscriber
+                $('#sync-loader').removeClass('hidden').addClass('flex');
+
+                $.ajax({
+                    url: "{{ route('admin.whatsapp-groups.sync') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        subscriber_id: subscriberId
+                    },
+                    success: function (response) {
+                        if (response.ok) {
+                            // Reload to show new groups
+                            window.location.reload();
+                        } else {
+                            $('#sync-loader').addClass('hidden').removeClass('flex');
+                            alert(response.message || 'Sync failed');
+                        }
+                    },
+                    error: function (xhr) {
+                        $('#sync-loader').addClass('hidden').removeClass('flex');
+                        const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred during sync';
+                        alert(errorMsg);
+                    }
                 });
             });
         });
