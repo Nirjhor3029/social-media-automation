@@ -202,27 +202,43 @@
                     </h3>
                     <div class="space-y-4">
                         <!-- WhatsApp -->
-                        <div
-                            class="flex items-center justify-between rounded-lg bg-green-50 p-3 ring-1 ring-green-100 dark:bg-green-900/10 dark:ring-green-900/30">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="flex h-10 w-10 items-center justify-center rounded-full bg-green-500 text-white shadow-sm">
-                                    <!-- Simple chat bubble icon representing whatsapp generic concept -->
-                                    <span class="material-symbols-outlined text-[20px]">chat</span>
+                        @if (isset($whatsappSubscriber) && in_array($whatsappSubscriber->status, ['ready', 'authenticated', 'connected']))
+                            <div
+                                class="flex items-center justify-between rounded-lg bg-green-50 p-3 ring-1 ring-green-100 dark:bg-green-900/10 dark:ring-green-900/30">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="flex h-10 w-10 items-center justify-center rounded-full bg-green-500 text-white shadow-sm">
+                                        <span class="material-symbols-outlined text-[20px]">chat</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">WhatsApp</p>
+                                        <p class="text-xs text-green-700 dark:text-green-400">Connected • Active</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="text-sm font-semibold text-slate-900 dark:text-white">WhatsApp
-                                    </p>
-                                    <p class="text-xs text-green-700 dark:text-green-400">Connected • Active
-                                    </p>
+                                <div class="relative flex h-2.5 w-2.5">
+                                    <span
+                                        class="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-green-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
                                 </div>
                             </div>
-                            <div class="flex h-2.5 w-2.5">
-                                <span
-                                    class="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-green-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                            </div>
-                        </div>
+                        @else
+                            <a href="{{ route('admin.whstapp-subscribers.connect') }}"
+                                class="flex items-center justify-between rounded-lg bg-slate-50 p-3 ring-1 ring-slate-100 hover:bg-slate-100 transition-all group dark:bg-slate-800/40 dark:ring-slate-800 dark:hover:bg-slate-800/60">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-400 text-white shadow-sm group-hover:bg-primary transition-colors">
+                                        <span class="material-symbols-outlined text-[20px]">chat</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">WhatsApp</p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">Not Connected • Click to Link</p>
+                                    </div>
+                                </div>
+                                <div class="flex h-6 w-6 items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                                </div>
+                            </a>
+                        @endif
                         <!-- Telegram -->
                         <div
                             class="flex items-center justify-between rounded-lg bg-slate-50 p-3 opacity-60 grayscale dark:bg-slate-800">
