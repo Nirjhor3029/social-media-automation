@@ -128,6 +128,11 @@ class WhstappSubscriberController extends Controller
         // Only hit QR API if we don't have a QR OR if previous session is explicitly disconnected/failed
         $needsQr = !$subcriber->qr || in_array($subcriber->status, ['closed', 'disconnected', 'expired']);
 
+        // Force refresh if requested via button
+        if ($request->force_refresh) {
+            $needsQr = true;
+        }
+
         // Quick fix: if status is connected/authenticated/ready, we definitely DON'T need a new QR
         if (in_array($subcriber->status, ['connected', 'authenticated', 'ready'])) {
             $needsQr = false;

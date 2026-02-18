@@ -177,7 +177,7 @@
                             </p>
                         </div>
 
-                        <button onclick="window.location.reload()" class="flex items-center gap-2 text-sm font-semibold text-slate-400 dark:text-slate-500 hover:text-primary dark:hover:text-primary transition-all duration-300 group">
+                        <button onclick="window.location.href='{{ route('admin.whstapp-subscribers.connect', ['subscriber_id' => $subcriber->id, 'force_refresh' => 1]) }}'" class="flex items-center gap-2 text-sm font-semibold text-slate-400 dark:text-slate-500 hover:text-primary dark:hover:text-primary transition-all duration-300 group">
                             <span class="material-symbols-outlined !text-lg group-hover:rotate-180 transition-transform duration-500">refresh</span>
                             <span>Reload QR Code</span>
                         </button>
