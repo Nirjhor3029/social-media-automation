@@ -102,6 +102,10 @@ class WhstappSubscriberController extends Controller
         $subscriber_id = $request->subscriber_id ?? null;
         $authUser = Auth::user();
 
+        $primarySubscriber = WhstappSubscriber::where('primary', 1)
+            ->where('user_id', $authUser->id)
+            ->first();
+
         if (!isset($authUser->phone) || $authUser->phone == '') {
             return Redirect::back()->with('warning', 'Please update your phone number first.');
         }
@@ -112,6 +116,7 @@ class WhstappSubscriberController extends Controller
                 ->first();
             if (!isset($subcriber)) {
                 $subcriber = new WhstappSubscriber();
+                $subcriber->primary = isset($primarySubscriber) ? 0 : 1; // Set as primary if no other primary exists
                 $subcriber->name = $authUser->name;
                 $subcriber->phone = $authUser->phone;
                 $subcriber->user_id = $authUser->id;
