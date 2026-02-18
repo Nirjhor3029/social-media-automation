@@ -117,7 +117,7 @@
                             <code class="text-xs text-primary font-bold">{{ $subcriber->session }}</code>
                         </div>
 
-                        <a href="{{ route('admin.whstapp-subscribers.index') }}" class="mt-8 px-8 py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-all">
+                        <a href="{{ route('admin.home') }}" class="mt-8 px-8 py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-all">
                             Go to Dashboard
                         </a>
                     </div>
