@@ -8,8 +8,8 @@ use App\Http\Requests\StoreWhatsappGroupRequest;
 use App\Http\Requests\UpdateWhatsappGroupRequest;
 use App\Models\WhatsappGroup;
 use App\Models\WhstappSubscriber;
-Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class WhatsappGroupController extends Controller

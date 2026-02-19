@@ -8,7 +8,7 @@ use App\Http\Requests\StoreWhstappSubscriberRequest;
 use App\Http\Requests\UpdateWhstappSubscriberRequest;
 use App\Models\User;
 use App\Models\WhstappSubscriber;
-// Illuminate\Support\Facades\Gate;
+// use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;

@@ -119,8 +119,7 @@
                             <tr>
                                 <td>{{ $customer->id }}</td>
                                 <td>{{ $customer->whatsapp }}</td>
-                                <td>-</td>
-                                <!-- Name not currently in Customer model based on prev view, but user asked for list -->
+                                <td>{{ $customer->name ?? 'N/A' }}</td>
                                 <td>{{ $customer->created_at }}</td>
                                 <td>
                                     <!-- Add delete/remove logic later if requested -->

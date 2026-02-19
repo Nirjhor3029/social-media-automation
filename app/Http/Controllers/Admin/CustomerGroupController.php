@@ -97,6 +97,7 @@ class CustomerGroupController extends Controller
         $customerGroup->customers()->create([
             'user_id' => auth()->id(),
             'whatsapp' => $request->whatsapp,
+            'name' => $request->name
             // Add other fields if present in request
         ]);
 
