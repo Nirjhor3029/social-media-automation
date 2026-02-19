@@ -8,15 +8,18 @@
 
     <ul class="c-sidebar-nav">
         <li class="c-sidebar-nav-item">
-            <a href="{{ route("admin.home") }}" class="c-sidebar-nav-link">
+            <a href="{{ route('admin.home') }}" class="c-sidebar-nav-link">
                 <i class="c-sidebar-nav-icon fas fa-fw fa-tachometer-alt">
 
                 </i>
                 {{ trans('global.dashboard') }}
             </a>
         </li>
+
+        {{-- user_management_access --}}
         @can('user_management_access')
-            <li class="c-sidebar-nav-dropdown {{ request()->is("admin/permissions*") ? "c-show" : "" }} {{ request()->is("admin/roles*") ? "c-show" : "" }} {{ request()->is("admin/users*") ? "c-show" : "" }}">
+            <li
+                class="c-sidebar-nav-dropdown {{ request()->is('admin/permissions*') ? 'c-show' : '' }} {{ request()->is('admin/roles*') ? 'c-show' : '' }} {{ request()->is('admin/users*') ? 'c-show' : '' }}">
                 <a class="c-sidebar-nav-dropdown-toggle" href="#">
                     <i class="fa-fw fas fa-users c-sidebar-nav-icon">
 
@@ -26,7 +29,8 @@
                 <ul class="c-sidebar-nav-dropdown-items">
                     @can('permission_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route("admin.permissions.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/permissions") || request()->is("admin/permissions/*") ? "c-active" : "" }}">
+                            <a href="{{ route('admin.permissions.index') }}"
+                                class="c-sidebar-nav-link {{ request()->is('admin/permissions') || request()->is('admin/permissions/*') ? 'c-active' : '' }}">
                                 <i class="fa-fw fas fa-unlock-alt c-sidebar-nav-icon">
 
                                 </i>
@@ -36,7 +40,8 @@
                     @endcan
                     @can('role_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route("admin.roles.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/roles") || request()->is("admin/roles/*") ? "c-active" : "" }}">
+                            <a href="{{ route('admin.roles.index') }}"
+                                class="c-sidebar-nav-link {{ request()->is('admin/roles') || request()->is('admin/roles/*') ? 'c-active' : '' }}">
                                 <i class="fa-fw fas fa-briefcase c-sidebar-nav-icon">
 
                                 </i>
@@ -46,7 +51,8 @@
                     @endcan
                     @can('user_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route("admin.users.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/users") || request()->is("admin/users/*") ? "c-active" : "" }}">
+                            <a href="{{ route('admin.users.index') }}"
+                                class="c-sidebar-nav-link {{ request()->is('admin/users') || request()->is('admin/users/*') ? 'c-active' : '' }}">
                                 <i class="fa-fw fas fa-user c-sidebar-nav-icon">
 
                                 </i>
@@ -57,8 +63,11 @@
                 </ul>
             </li>
         @endcan
+
+        {{-- whatsapp_access --}}
         @can('whatsapp_access')
-            <li class="c-sidebar-nav-dropdown {{ request()->is("admin/whstapp-subscribers*") ? "c-show" : "" }} {{ request()->is("admin/whatsapp-groups*") ? "c-show" : "" }}">
+            <li
+                class="c-sidebar-nav-dropdown {{ request()->is('admin/whstapp-subscribers*') ? 'c-show' : '' }} {{ request()->is('admin/whatsapp-groups*') ? 'c-show' : '' }}">
                 <a class="c-sidebar-nav-dropdown-toggle" href="#">
                     <i class="fa-fw fab fa-whatsapp c-sidebar-nav-icon">
 
@@ -68,7 +77,8 @@
                 <ul class="c-sidebar-nav-dropdown-items">
                     @can('whstapp_subscriber_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route("admin.whstapp-subscribers.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/whstapp-subscribers") || request()->is("admin/whstapp-subscribers/*") ? "c-active" : "" }}">
+                            <a href="{{ route('admin.whstapp-subscribers.index') }}"
+                                class="c-sidebar-nav-link {{ request()->is('admin/whstapp-subscribers') || request()->is('admin/whstapp-subscribers/*') ? 'c-active' : '' }}">
                                 <i class="fa-fw far fa-user-circle c-sidebar-nav-icon">
 
                                 </i>
@@ -78,11 +88,21 @@
                     @endcan
                     @can('whatsapp_group_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route("admin.whatsapp-groups.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/whatsapp-groups") || request()->is("admin/whatsapp-groups/*") ? "c-active" : "" }}">
+                            <a href="{{ route('admin.whatsapp-groups.index') }}"
+                                class="c-sidebar-nav-link {{ request()->is('admin/whatsapp-groups') || request()->is('admin/whatsapp-groups/*') ? 'c-active' : '' }}">
                                 <i class="fa-fw fas fa-users c-sidebar-nav-icon">
 
                                 </i>
                                 {{ trans('cruds.whatsappGroup.title') }}
+                            </a>
+                        </li>
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.customer-groups.index') }}"
+                                class="c-sidebar-nav-link {{ request()->is('admin/customer-groups') || request()->is('admin/customer-groups/*') ? 'c-active' : '' }}">
+                                <i class="fa-fw fas fa-users c-sidebar-nav-icon">
+
+                                </i>
+                                {{ trans('cruds.customerGroup.title') }}
                             </a>
                         </li>
                     @endcan
@@ -90,7 +110,8 @@
             </li>
         @endcan
         @can('setting_access')
-            <li class="c-sidebar-nav-dropdown {{ request()->is("admin/customers*") ? "c-show" : "" }} {{ request()->is("admin/temnplates*") ? "c-show" : "" }}">
+            <li
+                class="c-sidebar-nav-dropdown {{ request()->is('admin/customers*') ? 'c-show' : '' }} {{ request()->is('admin/temnplates*') ? 'c-show' : '' }}">
                 <a class="c-sidebar-nav-dropdown-toggle" href="#">
                     <i class="fa-fw fas fa-cog c-sidebar-nav-icon">
 
@@ -100,7 +121,8 @@
                 <ul class="c-sidebar-nav-dropdown-items">
                     @can('customer_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route("admin.customers.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/customers") || request()->is("admin/customers/*") ? "c-active" : "" }}">
+                            <a href="{{ route('admin.customers.index') }}"
+                                class="c-sidebar-nav-link {{ request()->is('admin/customers') || request()->is('admin/customers/*') ? 'c-active' : '' }}">
                                 <i class="fa-fw fas fa-users c-sidebar-nav-icon">
 
                                 </i>
@@ -110,7 +132,8 @@
                     @endcan
                     @can('temnplate_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route("admin.temnplates.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/temnplates") || request()->is("admin/temnplates/*") ? "c-active" : "" }}">
+                            <a href="{{ route('admin.temnplates.index') }}"
+                                class="c-sidebar-nav-link {{ request()->is('admin/temnplates') || request()->is('admin/temnplates/*') ? 'c-active' : '' }}">
                                 <i class="fa-fw fas fa-envelope c-sidebar-nav-icon">
 
                                 </i>
@@ -121,10 +144,11 @@
                 </ul>
             </li>
         @endcan
-        @if(file_exists(app_path('Http/Controllers/Auth/ChangePasswordController.php')))
+        @if (file_exists(app_path('Http/Controllers/Auth/ChangePasswordController.php')))
             @can('profile_password_edit')
                 <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link {{ request()->is('profile/password') || request()->is('profile/password/*') ? 'c-active' : '' }}" href="{{ route('profile.password.edit') }}">
+                    <a class="c-sidebar-nav-link {{ request()->is('profile/password') || request()->is('profile/password/*') ? 'c-active' : '' }}"
+                        href="{{ route('profile.password.edit') }}">
                         <i class="fa-fw fas fa-key c-sidebar-nav-icon">
                         </i>
                         {{ trans('global.change_password') }}
@@ -133,7 +157,8 @@
             @endcan
         @endif
         <li class="c-sidebar-nav-item">
-            <a href="#" class="c-sidebar-nav-link" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
+            <a href="#" class="c-sidebar-nav-link"
+                onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
                 <i class="c-sidebar-nav-icon fas fa-fw fa-sign-out-alt">
 
                 </i>

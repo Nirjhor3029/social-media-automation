@@ -150,17 +150,14 @@ class CustomerGroupController extends Controller
         ]);
 
         $subscriber = WhstappSubscriber::where('user_id', auth()->id())
-            ->where('status', 'authenticated')
+            ->whereIn('status', ['authenticated', 'ready', 'connected'])
+            ->orderByRaw("CASE 
+                WHEN status = 'authenticated' THEN 1 
+                WHEN status = 'ready' THEN 2 
+                WHEN status = 'connected' THEN 3 
+                ELSE 4 END")
             ->orderBy('primary', 'desc')
             ->first();
-
-        // Fallback to any connected if no authenticated found
-        if (!$subscriber) {
-            $subscriber = WhstappSubscriber::where('user_id', auth()->id())
-                ->where('status', 'ready')
-                ->orderBy('primary', 'desc')
-                ->first();
-        }
 
         if (!$subscriber || !$subscriber->session) {
             return back()->with('error', 'No connected WhatsApp account found. Please connect your WhatsApp first.');
@@ -174,10 +171,16 @@ class CustomerGroupController extends Controller
             // Send to specific selected customers
             $numbers = array_unique($request->specific_customers);
             foreach ($numbers as $number) {
-                SendBroadcastMessage::dispatch($number, $message, $sessionId);
+                $personalizedMessage = $message;
+                $customer = Customer::where('whatsapp', $number)->first();
+                if ($customer) {
+                    $personalizedMessage = str_replace('{Name}', $customer->name ?? 'Customer', $message);
+                    $personalizedMessage = str_replace('{Whatsapp}', $customer->whatsapp, $personalizedMessage);
+                }
+                SendBroadcastMessage::dispatch($number, $personalizedMessage, $sessionId);
                 $count++;
             }
-            return back()->with('success', "Broadcast started. Sending to {$count} selected customers.");
+            return back()->with('message', "Broadcast started. Sending to {$count} selected customers.");
         } elseif ($request->has('groups') && is_array($request->groups) && count($request->groups) > 0) {
             // Send to all in selected groups
             $groupIds = $request->groups;
@@ -185,11 +188,13 @@ class CustomerGroupController extends Controller
 
             foreach ($customers as $customer) {
                 if ($customer->whatsapp) {
-                    SendBroadcastMessage::dispatch($customer->whatsapp, $message, $sessionId);
+                    $personalizedMessage = str_replace('{Name}', $customer->name ?? 'Customer', $message);
+                    $personalizedMessage = str_replace('{Whatsapp}', $customer->whatsapp, $personalizedMessage);
+                    SendBroadcastMessage::dispatch($customer->whatsapp, $personalizedMessage, $sessionId);
                     $count++;
                 }
             }
-            return back()->with('success', "Broadcast started. Sending to {$count} customers in selected groups.");
+            return back()->with('message', "Broadcast started. Sending to {$count} customers in selected groups.");
         }
 
         return back()->with('error', 'Please select at least one group or specific customers.');

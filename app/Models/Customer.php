@@ -22,6 +22,7 @@ class Customer extends Model
     protected $fillable = [
         'user_id',
         'customer_group_id',
+        'name',
         'whatsapp',
         'facebook',
         'telegram',

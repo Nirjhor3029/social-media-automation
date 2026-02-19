@@ -22,52 +22,66 @@
             padding: 2px 12px !important;
             font-size: 0.875rem !important;
             font-weight: 500 !important;
-                margin: 4px !important;
-            }
+            margin: 4px !important;
+        }
 
-            .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-                color: #166534 !important;
-                margin-right: 8px !important;
-                border: none !important;
-            }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: #166534 !important;
+            margin-right: 8px !important;
+            border: none !important;
+        }
 
-            .select2-container--default .select2-search--inline .select2-search__field {
-                color: inherit !important;
-                font-size: 0.875rem !important;
-                padding-left: 8px !important;
-            }
-
-            .dark .select2-dropdown {
-                background-color: #1e293b !important;
-                border-color: #334155 !important;
-                color: #f1f5f9 !important;
-            }
-
-            .dark .select2-results__option--highlighted[aria-selected] {
-                background-color: #25D366 !important;
-                color: white !important;
-            }
-
-            .custom-scrollbar::-webkit-scrollbar {
-                width: 6px;
-            }
-            .custom-scrollbar::-webkit-scrollbar-track {
-                background: transparent;
-            }
-            .custom-scrollbar::-webkit-scrollbar-thumb {
-                background: #cbd5e1;
-                border-radius: 10px;
-            }
-            .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-                background: #4b5563;
-            }
-        </style>
+        .select2-container--default .select2-search--inline .select2-search__field {
+            color: inherit !important;
+            font-size: 0.875rem !important;
+            padding-left: 8px !important;
+        }
+        
+        .dark .select2-dropdown {
+            background-color: #1e293b !important;
+            border-color: #334155 !important;
+            color: #f1f5f9 !important;
+        }
+        
+        .dark .select2-results__option--highlighted[aria-selected] {
+            background-color: #25D366 !important;
+            color: white !important;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4b5563;
+        }
+    </style>
 @endsection
 
 @section('content')
     <form id="broadcastForm" action="{{ route('admin.customer-groups.send-broadcast') }}" method="POST">
         @csrf
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {{-- Alert Section --}}
+            @if(session('message'))
+                <div class="mb-6 flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-4 text-green-700 dark:border-green-900/30 dark:bg-green-900/20 dark:text-green-400 animate-in fade-in slide-in-from-top-4 duration-300">
+                    <span class="material-icons-round">check_circle</span>
+                    <p class="text-sm font-medium">{{ session('message') }}</p>
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-900/30 dark:bg-red-900/20 dark:text-red-400 animate-in fade-in slide-in-from-top-4 duration-300">
+                    <span class="material-icons-round">error</span>
+                    <p class="text-sm font-medium">{{ session('error') }}</p>
+                </div>
+            @endif
+
             <div class="flex flex-col lg:flex-row gap-8">
                 <div class="flex-1 space-y-8">
                     {{-- Section 1: Target Groups --}}
@@ -147,32 +161,55 @@
                                 <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-sm">3</span>
                                 <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Compose Message</h2>
                             </div>
+                            <span class="text-xs text-slate-400" id="charCountLabel">0 / 1024</span>
                         </div>
                         <div class="p-6">
-                            <div class="mb-4 flex flex-wrap gap-2 text-slate-900 dark:text-white">
-                                <button type="button" onclick="insertAtCursor('{Name}')"
-                                    class="px-3 py-1.5 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                                    <span class="text-blue-500 mr-1">{</span>Name<span class="text-blue-500 ml-1">}</span>
+                            <!-- Formatting Toolbar from group broadcast -->
+                            <div class="mb-4 flex flex-wrap items-center gap-1 border-b border-slate-100 dark:border-slate-800 pb-3">
+                                <button type="button" onclick="applyStyle('*')" class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800" title="Bold">
+                                    <span class="material-icons-round text-[20px]">format_bold</span>
                                 </button>
-                                <button type="button" class="px-3 py-1.5 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                                    <span class="material-icons-round text-sm align-middle mr-1">sentiment_satisfied</span>
-                                    Emoji
+                                <button type="button" onclick="applyStyle('_')" class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800" title="Italic">
+                                    <span class="material-icons-round text-[20px]">format_italic</span>
+                                </button>
+                                <button type="button" onclick="applyStyle('~')" class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800" title="Strikethrough">
+                                    <span class="material-icons-round text-[20px]">format_strikethrough</span>
+                                </button>
+                                <button type="button" onclick="applyStyle('```')" class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800" title="Monospace">
+                                    <span class="material-icons-round text-[20px]">code</span>
+                                </button>
+                                <div class="mx-2 h-4 w-[1px] bg-slate-200 dark:bg-slate-700"></div>
+                                <button type="button" onclick="insertAtCursor('{Name}')"
+                                    class="flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-bold text-primary hover:bg-primary/10 transition-colors">
+                                    <span class="material-icons-round text-[16px]">person_add</span>
+                                    {Name}
+                                </button>
+                                <button type="button" onclick="insertAtCursor('{Whatsapp}')"
+                                    class="flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-bold text-primary hover:bg-primary/10 transition-colors">
+                                    <span class="material-icons-round text-[16px]">phone</span>
+                                    {Whatsapp}
                                 </button>
                             </div>
+
                             <div class="relative">
                                 <textarea id="messageTextarea" name="message" required
-                                    class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-primary focus:border-primary placeholder-slate-400 text-sm leading-relaxed"
+                                    class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-primary focus:border-primary placeholder:text-slate-400 text-sm leading-relaxed min-h-[250px]"
                                     placeholder="Hello {Name}, we have a special update for you..." rows="8"></textarea>
-                                <div class="absolute bottom-3 right-3 text-xs text-slate-400 dark:text-slate-500 bg-white/80 dark:bg-slate-800/80 px-2 py-1 rounded">
-                                    <span id="charCount">0</span> / 1024
+                            </div>
+                            
+                            {{-- Preview Area --}}
+                            <div class="mt-6">
+                                <h3 class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Live Preview</h3>
+                                <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-4 min-h-[100px] whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300 italic" id="messagePreview">
+                                    Your message preview will appear here...
                                 </div>
                             </div>
                         </div>
                     </section>
 
                     <div class="flex justify-end pt-4 pb-12">
-                        <button type="submit" class="flex items-center gap-2 px-8 py-4 bg-primary text-white hover:bg-green-600 rounded-xl font-bold shadow-lg shadow-primary/20 transition-all transform hover:-translate-y-1 active:scale-95">
-                            <span class="material-icons-round">campaign</span>
+                        <button type="submit" id="submitBtn" class="flex items-center gap-2 px-8 py-4 bg-primary text-white hover:bg-green-600 rounded-xl font-bold shadow-lg shadow-primary/20 transition-all transform hover:-translate-y-1 active:scale-95 group">
+                            <span class="material-icons-round group-hover:rotate-12 transition-transform">campaign</span>
                             LAUNCH BROADCAST CAMPAIGN
                         </button>
                     </div>
@@ -200,7 +237,7 @@
                             <div class="flex gap-3">
                                 <span class="material-icons-round text-blue-500 text-sm">info</span>
                                 <p class="text-[11px] text-blue-700 dark:text-blue-300 leading-relaxed">
-                                    Messages are sent sequentially to comply with platform rate limits and avoid spam flags.
+                                    Messages are sent sequentially with a small delay to comply with platform rate limits and avoid spam flags.
                                 </p>
                             </div>
                         </div>
@@ -209,6 +246,18 @@
             </div>
         </main>
     </form>
+
+    {{-- Processing Overlay --}}
+    <div id="sendingOverlay" class="hidden fixed inset-0 z-50 items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-2xl flex flex-col items-center gap-4 max-w-sm text-center">
+            <div class="relative w-16 h-16">
+                <div class="absolute inset-0 border-4 border-slate-100 dark:border-slate-800 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Launching Campaign</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">We are queueing your messages. Please do not close this page.</p>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
@@ -222,12 +271,57 @@
             textarea.value = val.substring(0, start) + text + val.substring(end);
             textarea.selectionStart = textarea.selectionEnd = start + text.length;
             textarea.focus();
-            updateCharCount();
+            updateLivePreview();
         }
 
-        function updateCharCount() {
-            const count = $('#messageTextarea').val().length;
-            $('#charCount').text(count);
+        function applyStyle(style) {
+            const textarea = document.getElementById('messageTextarea');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            const selectedText = text.substring(start, end);
+            
+            let wrappedText = '';
+            if (style === '```') {
+                 wrappedText = '```' + (selectedText || 'text') + '```';
+            } else {
+                 wrappedText = style + (selectedText || 'text') + style;
+            }
+            
+            textarea.value = text.substring(0, start) + wrappedText + text.substring(end);
+            textarea.focus();
+            const newPos = start + wrappedText.length;
+            textarea.setSelectionRange(newPos, newPos);
+            updateLivePreview();
+        }
+
+        function updateLivePreview() {
+            const textarea = document.getElementById('messageTextarea');
+            const preview = document.getElementById('messagePreview');
+            const charCount = document.getElementById('charCountLabel');
+            const text = textarea.value;
+            
+            charCount.innerText = `${text.length} / 1024`;
+
+            if (!text) {
+                preview.innerHTML = "Your message preview will appear here...";
+                preview.classList.add('italic', 'text-slate-400');
+                return;
+            }
+            
+            preview.classList.remove('italic', 'text-slate-400');
+            
+            // Basic WhatsApp Markdown Simulation
+            let html = text
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") // Escape
+                .replace(/\*(.*?)\*/g, '<b>$1</b>') // Bold
+                .replace(/_(.*?)_/g, '<i>$1</i>') // Italic
+                .replace(/~(.*?)~/g, '<strike>$1</strike>') // Strikethrough
+                .replace(/```(.*?)```/gs, '<code class="bg-slate-100 dark:bg-slate-700 px-1 rounded">$1</code>') // Code
+                .replace(/{Name}/g, '<span class="text-primary font-bold">John Doe</span>') // Placeholder
+                .replace(/{Whatsapp}/g, '<span class="text-primary font-bold">+123456789</span>'); // Placeholder
+            
+            preview.innerHTML = html;
         }
 
         $(document).ready(function () {
@@ -240,7 +334,11 @@
                 updateSummary();
             });
 
-            $('#messageTextarea').on('input', updateCharCount);
+            $('#messageTextarea').on('input', updateLivePreview);
+
+            $('#broadcastForm').on('submit', function() {
+                $('#sendingOverlay').removeClass('hidden').addClass('flex');
+            });
 
             function updateSummary() {
                 const selectedGroups = $('#groupsSelect').select2('data');
@@ -274,7 +372,7 @@
                 var $tbody = $('#customersTableBody');
                 $tbody.empty();
                 $('#specificCustomersSection').removeClass('hidden');
-                $tbody.html('<tr><td colspan="4" class="px-6 py-4 text-center text-slate-500">Loading customers...</td></tr>');
+                $tbody.html('<tr><td colspan="4" class="px-6 py-4 text-center text-slate-500"><div class="animate-pulse">Loading customers from selected groups...</div></td></tr>');
 
                 let fetchedCount = 0;
                 let groupsToFetch = selectedGroups.length;

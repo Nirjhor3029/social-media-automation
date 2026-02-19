@@ -29,6 +29,7 @@ class WhstappSubscriber extends Model
         'qr',
         'qr_updated_at',
         'status',
+        'primary',
         'created_at',
         'updated_at',
         'deleted_at',
