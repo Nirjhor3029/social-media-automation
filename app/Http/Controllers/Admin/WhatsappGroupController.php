@@ -8,7 +8,7 @@ use App\Http\Requests\StoreWhatsappGroupRequest;
 use App\Http\Requests\UpdateWhatsappGroupRequest;
 use App\Models\WhatsappGroup;
 use App\Models\WhstappSubscriber;
-use Gate;
+Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
