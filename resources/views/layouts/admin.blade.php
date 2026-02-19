@@ -40,6 +40,10 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -76,6 +80,10 @@
                         "background-light": "#f6f7f8",
                         "background-dark": "#121920",
                         "sidebar-dark": "#0f172a",
+                        //  primary: "#4F46E5", // Brand Blue
+                        "success": "#10B981", // Success Green
+                        // "background-light": "#F9FAFB",
+                        // "background-dark": "#111827",
                     },
                     fontFamily: {
                         "display": ["Inter", "sans-serif"],
@@ -121,7 +129,7 @@
                             </div>
                         </div>
                     @endif
-                    
+
                     @if (session('error'))
                         <div class="row mb-2">
                             <div class="col-lg-12">

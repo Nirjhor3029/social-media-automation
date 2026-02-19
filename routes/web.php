@@ -33,6 +33,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('customers/destroy', 'CustomersController@massDestroy')->name('customers.massDestroy');
     Route::resource('customers', 'CustomersController');
 
+    // Customer Groups
+    Route::post('customer-groups/add-customer/{customerGroup}', 'CustomerGroupController@addCustomer')->name('customer-groups.add-customer');
+    Route::post('customer-groups/import-customers/{customerGroup}', 'CustomerGroupController@importCustomers')->name('customer-groups.import-customers');
+    Route::get('customer-groups/{customerGroup}/customers', 'CustomerGroupController@getCustomers')->name('customer-groups.get-customers');
+    Route::get('broadcast', 'CustomerGroupController@broadcast')->name('customer-groups.broadcast');
+    Route::post('broadcast/send', 'CustomerGroupController@sendBroadcast')->name('customer-groups.send-broadcast');
+    Route::post('customer-groups/{customerGroup}/toggle-status', 'CustomerGroupController@toggleStatus')->name('customer-groups.toggle-status');
+    Route::resource('customer-groups', 'CustomerGroupController');
+
     // Temnplate
     Route::delete('temnplates/destroy', 'TemnplateController@massDestroy')->name('temnplates.massDestroy');
     Route::post('temnplates/media', 'TemnplateController@storeMedia')->name('temnplates.storeMedia');
