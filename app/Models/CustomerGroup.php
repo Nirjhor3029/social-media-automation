@@ -9,6 +9,15 @@ class CustomerGroup extends Model
 {
     use HasFactory;
 
+    protected static function booted()
+    {
+        static::addGlobalScope('owned_customer_groups', function ($builder) {
+            if (auth()->check() && !auth()->user()->is_admin) {
+                $builder->where('user_id', auth()->id());
+            }
+        });
+    }
+
     public $table = 'customer_groups';
 
     protected $fillable = [

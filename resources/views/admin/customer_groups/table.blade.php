@@ -12,6 +12,11 @@
                     Group Name <span class="material-icons-outlined text-xs">unfold_more</span>
                 </div>
             </th>
+            @if(auth()->user()->is_admin)
+                <th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    Owner
+                </th>
+            @endif
             <th
                 class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">
                 Total Customers
@@ -38,6 +43,11 @@
                         {{ $group->created_at->format('M d, Y') }}
                     </div>
                 </td>
+                @if(auth()->user()->is_admin)
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-slate-600 dark:text-slate-400">{{ $group->user->name ?? 'System' }}</div>
+                    </td>
+                @endif
                 <td class="px-6 py-4 text-center">
                     <span
                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200">

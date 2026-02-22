@@ -76,7 +76,11 @@ class CustomerGroupController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        $customerGroup->update($request->all());
+        $customerGroup->update($request->only([
+            'name',
+            'description',
+            'status',
+        ]));
 
         return redirect()->route('admin.customer-groups.index')->with('success', 'Group updated successfully.');
     }
