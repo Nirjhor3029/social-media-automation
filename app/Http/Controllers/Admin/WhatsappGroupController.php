@@ -18,14 +18,8 @@ class WhatsappGroupController extends Controller
     {
         abort_if(Gate::denies('whatsapp_group_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $authUser = auth()->user();
-        $subscribers = WhstappSubscriber::where('user_id', $authUser->id)->get();
-
-        $whatsappGroups = WhatsappGroup::with(['whstapp_subscriber'])
-            ->whereHas('whstapp_subscriber', function ($query) use ($authUser) {
-                $query->where('user_id', $authUser->id);
-            })
-            ->get();
+        $subscribers = WhstappSubscriber::get();
+        $whatsappGroups = WhatsappGroup::with(['whstapp_subscriber'])->get();
 
         return view('admin.whatsappGroups.index', compact('whatsappGroups', 'subscribers'));
     }

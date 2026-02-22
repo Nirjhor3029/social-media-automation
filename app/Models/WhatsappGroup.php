@@ -11,6 +11,17 @@ class WhatsappGroup extends Model
 {
     use SoftDeletes, HasFactory;
 
+    protected static function booted()
+    {
+        static::addGlobalScope('owned_whatsapp_groups', function ($builder) {
+            if (auth()->check() && !auth()->user()->is_admin) {
+                $builder->whereHas('whstapp_subscriber', function ($query) {
+                    $query->where('user_id', auth()->id());
+                });
+            }
+        });
+    }
+
     public $table = 'whatsapp_groups';
 
     protected $dates = [

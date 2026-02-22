@@ -147,11 +147,18 @@
                         </div>
                         <div
                             class="mt-auto flex items-center justify-between border-t border-slate-100 pt-3 dark:border-slate-800">
-                            <span
-                                class="inline-flex items-center rounded bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                                <span class="material-symbols-outlined mr-1 text-[12px]">smartphone</span>
-                                {{ $group->whstapp_subscriber->phone ?? 'N/A' }}
-                            </span>
+                            <div class="flex flex-col gap-1 items-start">
+                                <span
+                                    class="inline-flex items-center rounded bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                                    <span class="material-symbols-outlined mr-1 text-[12px]">smartphone</span>
+                                    {{ $group->whstapp_subscriber->phone ?? 'N/A' }}
+                                </span>
+                                @if(auth()->user()->is_admin)
+                                    <span class="text-[10px] text-slate-500 font-medium">
+                                        Owner: {{ $group->whstapp_subscriber->user->name ?? 'System' }}
+                                    </span>
+                                @endif
+                            </div>
                             <span class="text-[10px] text-slate-400">
                                 {{ $group->created_at ? $group->created_at->diffForHumans() : '' }}
                             </span>
@@ -274,9 +281,9 @@
                     alert('Please select a WhatsApp number first to sync groups.');
                     return;
                 }
-                
+
                 $('#sync-loader').removeClass('hidden').addClass('flex');
-                
+
                 $.ajax({
                     url: "{{ route('admin.whatsapp-groups.sync') }}",
                     method: 'POST',
@@ -284,7 +291,7 @@
                         _token: "{{ csrf_token() }}",
                         subscriber_id: subscriberId
                     },
-                    success: function(response) {
+                    success: function (response) {
                         if (response.ok) {
                             window.location.reload();
                         } else {
@@ -292,7 +299,7 @@
                             alert(response.message || 'Sync failed');
                         }
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         $('#sync-loader').addClass('hidden').removeClass('flex');
                         const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred during sync';
                         alert(errorMsg);

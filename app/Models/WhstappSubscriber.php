@@ -12,6 +12,15 @@ class WhstappSubscriber extends Model
 {
     use SoftDeletes, HasFactory;
 
+    protected static function booted()
+    {
+        static::addGlobalScope('owned_subscribers', function ($builder) {
+            if (auth()->check() && !auth()->user()->is_admin) {
+                $builder->where('user_id', auth()->id());
+            }
+        });
+    }
+
     public $table = 'whstapp_subscribers';
 
     protected $dates = [
