@@ -11,6 +11,15 @@ class Customer extends Model
 {
     use SoftDeletes, HasFactory;
 
+    protected static function booted()
+    {
+        static::addGlobalScope('owned_customers', function ($builder) {
+            if (auth()->check() && !auth()->user()->is_admin) {
+                $builder->where('user_id', auth()->id());
+            }
+        });
+    }
+
     public $table = 'customers';
 
     protected $dates = [

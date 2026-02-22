@@ -19,7 +19,7 @@ class CustomersController extends Controller
     {
         abort_if(Gate::denies('customer_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $customers = Customer::with(['user'])->get();
+        $customers = Customer::with(['user', 'customerGroup'])->get();
 
         return view('admin.customers.index', compact('customers'));
     }
@@ -28,14 +28,14 @@ class CustomersController extends Controller
     {
         abort_if(Gate::denies('customer_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $users = User::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
-
-        return view('admin.customers.create', compact('users'));
+        return view('admin.customers.create');
     }
 
     public function store(StoreCustomerRequest $request)
     {
-        $customer = Customer::create($request->all());
+        $data = $request->all();
+        $data['user_id'] = auth()->id();
+        $customer = Customer::create($data);
 
         return redirect()->route('admin.customers.index');
     }
@@ -44,11 +44,9 @@ class CustomersController extends Controller
     {
         abort_if(Gate::denies('customer_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $users = User::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
-
         $customer->load('user');
 
-        return view('admin.customers.edit', compact('customer', 'users'));
+        return view('admin.customers.edit', compact('customer'));
     }
 
     public function update(UpdateCustomerRequest $request, Customer $customer)
@@ -78,7 +76,7 @@ class CustomersController extends Controller
 
     public function massDestroy(MassDestroyCustomerRequest $request)
     {
-        $customers = Customer::find(request('ids'));
+        $customers = Customer::whereIn('id', request('ids'))->get();
 
         foreach ($customers as $customer) {
             $customer->delete();

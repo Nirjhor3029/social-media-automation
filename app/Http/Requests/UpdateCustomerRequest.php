@@ -17,6 +17,10 @@ class UpdateCustomerRequest extends FormRequest
     public function rules()
     {
         return [
+            'name' => [
+                'string',
+                'nullable',
+            ],
             'whatsapp' => [
                 'string',
                 'nullable',
