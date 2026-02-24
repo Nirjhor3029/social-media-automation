@@ -48,6 +48,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('message-templates/ckmedia', 'MessageTemplateController@storeCKEditorImages')->name('message-templates.storeCKEditorImages');
     Route::get('message-templates/get-template', 'MessageTemplateController@getTemplate')->name('message-templates.get-template');
     Route::post('message-templates/quick-store', 'MessageTemplateController@quickStore')->name('message-templates.quick-store');
+    Route::post('message-templates/quick-update', 'MessageTemplateController@quickUpdate')->name('message-templates.quick-update');
     Route::resource('message-templates', 'MessageTemplateController');
 
     // Whstapp Subscriber

@@ -229,6 +229,11 @@
                                     {Whatsapp}
                                 </button>
                                 <div class="flex-1"></div>
+                                <button type="button" id="updateTemplateBtn"
+                                    class="hidden flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-bold text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-colors">
+                                    <span class="material-icons-round text-[16px]">edit</span>
+                                    Update Template
+                                </button>
                                 <button type="button" id="saveAsTemplateBtn"
                                     class="flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-bold text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/10 transition-colors">
                                     <span class="material-icons-round text-[16px]">save</span>
@@ -449,11 +454,11 @@
 
                         customers.forEach(function (customer) {
                             var row = `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors customer-row">
-                                                    <td class="px-6 py-4 text-center"><input type="checkbox" name="specific_customers[]" value="${customer.whatsapp}" class="rounded border-slate-300 text-primary focus:ring-primary customer-checkbox"></td>
-                                                    <td class="px-6 py-4 font-mono text-slate-700 dark:text-slate-300">${customer.whatsapp}</td>
-                                                    <td class="px-6 py-4 text-slate-700 dark:text-slate-300">${customer.name || '-'}</td>
-                                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-xs text-slate-600 dark:text-slate-400">${groupName}</span></td>
-                                                </tr>`;
+                                                        <td class="px-6 py-4 text-center"><input type="checkbox" name="specific_customers[]" value="${customer.whatsapp}" class="rounded border-slate-300 text-primary focus:ring-primary customer-checkbox"></td>
+                                                        <td class="px-6 py-4 font-mono text-slate-700 dark:text-slate-300">${customer.whatsapp}</td>
+                                                        <td class="px-6 py-4 text-slate-700 dark:text-slate-300">${customer.name || '-'}</td>
+                                                        <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-xs text-slate-600 dark:text-slate-400">${groupName}</span></td>
+                                                    </tr>`;
                             $tbody.append(row);
                         });
 
@@ -486,12 +491,59 @@
             // Template Selector Logic
             $('#templateSelector').on('change', function () {
                 const id = $(this).val();
-                if (!id) return;
+                if (!id) {
+                    $('#updateTemplateBtn').addClass('hidden');
+                    return;
+                }
 
                 $.get('{{ route("admin.message-templates.get-template") }}', { id: id }, function (response) {
                     if (response.status === 'success') {
                         $('#messageTextarea').val(response.message);
                         updateLivePreview();
+                        $('#updateTemplateBtn').removeClass('hidden');
+                    }
+                });
+            });
+
+            // Update Template Logic
+            $('#updateTemplateBtn').on('click', function () {
+                const id = $('#templateSelector').val();
+                const message = $('#messageTextarea').val();
+                const title = $("#templateSelector option:selected").text();
+
+                if (!id || !message) return;
+
+                Swal.fire({
+                    title: 'Update Template?',
+                    text: `Do you want to update the message for "${title}"?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, update it!',
+                    confirmButtonColor: '#4a8fd9',
+                    cancelButtonColor: '#64748b',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post('{{ route("admin.message-templates.quick-update") }}', {
+                            _token: '{{ csrf_token() }}',
+                            id: id,
+                            message: message
+                        }, function (response) {
+                            if (response.status === 'success') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Updated!',
+                                    text: 'Template updated successfully.',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            }
+                        }).fail(function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Failed to update template.',
+                            });
+                        });
                     }
                 });
             });

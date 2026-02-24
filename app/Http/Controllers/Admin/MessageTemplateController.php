@@ -143,4 +143,33 @@ class MessageTemplateController extends Controller
             'template' => $template
         ]);
     }
+
+    public function quickUpdate(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:message_templates,id',
+            'message' => 'required|string',
+        ]);
+
+        $template = MessageTemplate::where('user_id', auth()->id())
+            ->where('id', $request->id)
+            ->first();
+
+        if ($template) {
+            $template->update([
+                'message' => $request->message,
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Template updated successfully',
+                'template' => $template
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Template not found'
+        ], 404);
+    }
 }

@@ -90,6 +90,11 @@
                                         [Group Name]
                                     </button>
                                     <div class="flex-1"></div>
+                                    <button type="button" id="update-template-btn"
+                                        class="hidden flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-bold text-blue-600 hover:bg-blue-50">
+                                        <span class="material-symbols-outlined text-[16px]">edit</span>
+                                        Update Template
+                                    </button>
                                     <button type="button" id="save-as-template-btn"
                                         class="flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-bold text-amber-600 hover:bg-amber-50">
                                         <span class="material-symbols-outlined text-[16px]">save</span>
@@ -272,12 +277,59 @@
             // Template Selector Logic
             $('#template-selector').on('change', function () {
                 const id = $(this).val();
-                if (!id) return;
+                if (!id) {
+                    $('#update-template-btn').addClass('hidden');
+                    return;
+                }
 
                 $.get('{{ route("admin.message-templates.get-template") }}', { id: id }, function (response) {
                     if (response.status === 'success') {
                         $textarea.val(response.message);
                         updatePreview();
+                        $('#update-template-btn').removeClass('hidden');
+                    }
+                });
+            });
+
+            // Update Template Logic
+            $('#update-template-btn').on('click', function () {
+                const id = $('#template-selector').val();
+                const message = $textarea.val();
+                const title = $("#template-selector option:selected").text();
+
+                if (!id || !message) return;
+
+                Swal.fire({
+                    title: 'Update Template?',
+                    text: `Do you want to update the message for "${title}"?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, update it!',
+                    confirmButtonColor: '#4a8fd9',
+                    cancelButtonColor: '#64748b',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post('{{ route("admin.message-templates.quick-update") }}', {
+                            _token: '{{ csrf_token() }}',
+                            id: id,
+                            message: message
+                        }, function (response) {
+                            if (response.status === 'success') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Updated!',
+                                    text: 'Template updated successfully.',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            }
+                        }).fail(function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Failed to update template.',
+                            });
+                        });
                     }
                 });
             });
