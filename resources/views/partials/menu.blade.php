@@ -86,6 +86,17 @@
                             </a>
                         </li>
                     @endcan
+                    @can('whstapp_subscriber_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.whatsapp-queries.index') }}"
+                                class="c-sidebar-nav-link {{ request()->is('admin/whatsapp-queries') || request()->is('admin/whatsapp-queries/*') ? 'c-active' : '' }}">
+                                <i class="fa-fw fas fa-question-circle c-sidebar-nav-icon">
+
+                                </i>
+                                Whatsapp Queries
+                            </a>
+                        </li>
+                    @endcan
                     @can('whatsapp_group_access')
                         <li class="c-sidebar-nav-item">
                             <a href="{{ route('admin.whatsapp-groups.index') }}"

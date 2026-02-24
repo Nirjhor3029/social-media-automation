@@ -68,4 +68,9 @@ class WhstappSubscriber extends Model
     {
         $this->attributes['qr_updated_at'] = $value ? Carbon::createFromFormat(config('panel.date_format') . ' ' . config('panel.time_format'), $value)->format('Y-m-d H:i:s') : null;
     }
+
+    public function whatsapp_queries()
+    {
+        return $this->hasMany(WhatsappQuery::class, 'whstapp_subscriber_id');
+    }
 }

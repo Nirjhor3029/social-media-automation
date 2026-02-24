@@ -64,6 +64,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('whatsapp-groups/send-broadcast', 'WhatsappGroupController@sendBroadcast')->name('whatsapp-groups.send-broadcast');
     Route::delete('whatsapp-groups/destroy', 'WhatsappGroupController@massDestroy')->name('whatsapp-groups.massDestroy');
     Route::resource('whatsapp-groups', 'WhatsappGroupController');
+
+    // Whatsapp Query
+    Route::delete('whatsapp-queries/destroy', 'WhatsappQueryController@massDestroy')->name('whatsapp-queries.massDestroy');
+    Route::resource('whatsapp-queries', 'WhatsappQueryController');
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password
