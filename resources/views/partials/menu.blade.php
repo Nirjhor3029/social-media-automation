@@ -111,7 +111,7 @@
         @endcan
         @can('setting_access')
             <li
-                class="c-sidebar-nav-dropdown {{ request()->is('admin/customers*') ? 'c-show' : '' }} {{ request()->is('admin/temnplates*') ? 'c-show' : '' }}">
+                class="c-sidebar-nav-dropdown {{ request()->is('admin/customers*') ? 'c-show' : '' }} {{ request()->is('admin/message-templates*') ? 'c-show' : '' }}">
                 <a class="c-sidebar-nav-dropdown-toggle" href="#">
                     <i class="fa-fw fas fa-cog c-sidebar-nav-icon">
 
@@ -130,14 +130,14 @@
                             </a>
                         </li>
                     @endcan
-                    @can('temnplate_access')
+                    @can('message_template_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route('admin.temnplates.index') }}"
-                                class="c-sidebar-nav-link {{ request()->is('admin/temnplates') || request()->is('admin/temnplates/*') ? 'c-active' : '' }}">
+                            <a href="{{ route('admin.message-templates.index') }}"
+                                class="c-sidebar-nav-link {{ request()->is('admin/message-templates') || request()->is('admin/message-templates/*') ? 'c-active' : '' }}">
                                 <i class="fa-fw fas fa-envelope c-sidebar-nav-icon">
 
                                 </i>
-                                {{ trans('cruds.temnplate.title') }}
+                                {{ trans('cruds.messageTemplate.title') }}
                             </a>
                         </li>
                     @endcan

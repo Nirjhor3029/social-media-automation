@@ -36,28 +36,31 @@
             font-size: 0.875rem !important;
             padding-left: 8px !important;
         }
-        
+
         .dark .select2-dropdown {
             background-color: #1e293b !important;
             border-color: #334155 !important;
             color: #f1f5f9 !important;
         }
-        
+
         .dark .select2-results__option--highlighted[aria-selected] {
             background-color: #25D366 !important;
             color: white !important;
         }
-        
+
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
         }
+
         .custom-scrollbar::-webkit-scrollbar-track {
             background: transparent;
         }
+
         .custom-scrollbar::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 10px;
         }
+
         .dark .custom-scrollbar::-webkit-scrollbar-thumb {
             background: #4b5563;
         }
@@ -70,13 +73,15 @@
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {{-- Alert Section --}}
             @if(session('message'))
-                <div class="mb-6 flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-4 text-green-700 dark:border-green-900/30 dark:bg-green-900/20 dark:text-green-400 animate-in fade-in slide-in-from-top-4 duration-300">
+                <div
+                    class="mb-6 flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-4 text-green-700 dark:border-green-900/30 dark:bg-green-900/20 dark:text-green-400 animate-in fade-in slide-in-from-top-4 duration-300">
                     <span class="material-icons-round">check_circle</span>
                     <p class="text-sm font-medium">{{ session('message') }}</p>
                 </div>
             @endif
             @if(session('error'))
-                <div class="mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-900/30 dark:bg-red-900/20 dark:text-red-400 animate-in fade-in slide-in-from-top-4 duration-300">
+                <div
+                    class="mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-900/30 dark:bg-red-900/20 dark:text-red-400 animate-in fade-in slide-in-from-top-4 duration-300">
                     <span class="material-icons-round">error</span>
                     <p class="text-sm font-medium">{{ session('error') }}</p>
                 </div>
@@ -85,17 +90,21 @@
             <div class="flex flex-col lg:flex-row gap-8">
                 <div class="flex-1 space-y-8">
                     {{-- Section 1: Target Groups --}}
-                    <section class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden text-slate-900 dark:text-white">
+                    <section
+                        class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden text-slate-900 dark:text-white">
                         <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-sm">1</span>
+                                <span
+                                    class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-sm">1</span>
                                 <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Select Target Groups</h2>
                             </div>
                         </div>
                         <div class="p-6">
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Customer Groups</label>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Customer
+                                Groups</label>
                             <div class="relative">
-                                <select name="groups[]" id="groupsSelect" class="w-full select2" multiple data-placeholder="Search and select groups...">
+                                <select name="groups[]" id="groupsSelect" class="w-full select2" multiple
+                                    data-placeholder="Search and select groups...">
                                     @foreach($groups as $group)
                                         <option value="{{ $group->id }}" data-count="{{ $group->customers_count }}">
                                             {{ $group->name }} ({{ $group->customers_count }} customers)
@@ -103,7 +112,8 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Leave empty if you want to select specific customers manually below.</p>
+                            <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Leave empty if you want to select
+                                specific customers manually below.</p>
                             <div class="mt-4">
                                 <button type="button" id="loadCustomersBtn"
                                     class="inline-flex items-center px-4 py-2 border border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg text-sm font-medium transition-all">
@@ -115,11 +125,16 @@
                     </section>
 
                     {{-- Section 2: Specific Customers --}}
-                    <section id="specificCustomersSection" class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden hidden">
+                    <section id="specificCustomersSection"
+                        class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden hidden">
                         <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-sm">2</span>
-                                <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Select Specific Customers <span class="text-sm font-normal text-slate-500 dark:text-slate-500 ml-2">(Optional)</span></h2>
+                                <span
+                                    class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-sm">2</span>
+                                <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Select Specific Customers
+                                    <span
+                                        class="text-sm font-normal text-slate-500 dark:text-slate-500 ml-2">(Optional)</span>
+                                </h2>
                             </div>
                             <div class="flex items-center gap-2">
                                 <div class="relative">
@@ -134,10 +149,13 @@
                         </div>
                         <div class="overflow-x-auto custom-scrollbar max-h-96">
                             <table class="w-full text-left text-sm border-collapse">
-                                <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-10">
+                                <thead
+                                    class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-10">
                                     <tr>
                                         <th class="px-6 py-3 font-medium text-slate-500 w-10 text-center">
-                                            <input id="selectAllCustomers" class="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox" />
+                                            <input id="selectAllCustomers"
+                                                class="rounded border-slate-300 text-primary focus:ring-primary"
+                                                type="checkbox" />
                                         </th>
                                         <th class="px-6 py-3 font-medium text-slate-500">WhatsApp</th>
                                         <th class="px-6 py-3 font-medium text-slate-500">Name</th>
@@ -149,33 +167,54 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="px-6 py-3 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 italic text-center">
+                        <div
+                            class="px-6 py-3 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 italic text-center">
                             Note: If specific customers are selected, they will be the only recipients.
                         </div>
                     </section>
 
                     {{-- Section 3: Compose Message --}}
-                    <section class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden text-slate-900 dark:text-white">
+                    <section
+                        class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden text-slate-900 dark:text-white">
                         <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-sm">3</span>
+                                <span
+                                    class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-sm">3</span>
                                 <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Compose Message</h2>
                             </div>
-                            <span class="text-xs text-slate-400" id="charCountLabel">0 / 1024</span>
+                            <div class="flex items-center gap-3">
+                                <select id="templateSelector"
+                                    class="rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:ring-primary focus:border-primary">
+                                    <option value="">Choose Template</option>
+                                    @foreach($messageTemplates as $template)
+                                        <option value="{{ $template->id }}">{{ $template->title }}</option>
+                                    @endforeach
+                                </select>
+                                <span class="text-xs text-slate-400" id="charCountLabel">0 / 1024</span>
+                            </div>
                         </div>
                         <div class="p-6">
                             <!-- Formatting Toolbar from group broadcast -->
-                            <div class="mb-4 flex flex-wrap items-center gap-1 border-b border-slate-100 dark:border-slate-800 pb-3">
-                                <button type="button" onclick="applyStyle('*')" class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800" title="Bold">
+                            <div
+                                class="mb-4 flex flex-wrap items-center gap-1 border-b border-slate-100 dark:border-slate-800 pb-3">
+                                <button type="button" onclick="applyStyle('*')"
+                                    class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800"
+                                    title="Bold">
                                     <span class="material-icons-round text-[20px]">format_bold</span>
                                 </button>
-                                <button type="button" onclick="applyStyle('_')" class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800" title="Italic">
+                                <button type="button" onclick="applyStyle('_')"
+                                    class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800"
+                                    title="Italic">
                                     <span class="material-icons-round text-[20px]">format_italic</span>
                                 </button>
-                                <button type="button" onclick="applyStyle('~')" class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800" title="Strikethrough">
+                                <button type="button" onclick="applyStyle('~')"
+                                    class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800"
+                                    title="Strikethrough">
                                     <span class="material-icons-round text-[20px]">format_strikethrough</span>
                                 </button>
-                                <button type="button" onclick="applyStyle('```')" class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800" title="Monospace">
+                                <button type="button" onclick="applyStyle('```')"
+                                    class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-primary dark:text-slate-400 dark:hover:bg-slate-800"
+                                    title="Monospace">
                                     <span class="material-icons-round text-[20px]">code</span>
                                 </button>
                                 <div class="mx-2 h-4 w-[1px] bg-slate-200 dark:bg-slate-700"></div>
@@ -189,6 +228,12 @@
                                     <span class="material-icons-round text-[16px]">phone</span>
                                     {Whatsapp}
                                 </button>
+                                <div class="flex-1"></div>
+                                <button type="button" id="saveAsTemplateBtn"
+                                    class="flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-bold text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/10 transition-colors">
+                                    <span class="material-icons-round text-[16px]">save</span>
+                                    Save Template
+                                </button>
                             </div>
 
                             <div class="relative">
@@ -196,11 +241,14 @@
                                     class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-primary focus:border-primary placeholder:text-slate-400 text-sm leading-relaxed min-h-[250px]"
                                     placeholder="Hello {Name}, we have a special update for you..." rows="8"></textarea>
                             </div>
-                            
+
                             {{-- Preview Area --}}
                             <div class="mt-6">
-                                <h3 class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Live Preview</h3>
-                                <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-4 min-h-[100px] whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300 italic" id="messagePreview">
+                                <h3
+                                    class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
+                                    Live Preview</h3>
+                                <div class="rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 p-4 min-h-[100px] whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300 italic"
+                                    id="messagePreview">
                                     Your message preview will appear here...
                                 </div>
                             </div>
@@ -208,7 +256,8 @@
                     </section>
 
                     <div class="flex justify-end pt-4 pb-12">
-                        <button type="submit" id="submitBtn" class="flex items-center gap-2 px-8 py-4 bg-primary text-white hover:bg-green-600 rounded-xl font-bold shadow-lg shadow-primary/20 transition-all transform hover:-translate-y-1 active:scale-95 group">
+                        <button type="submit" id="submitBtn"
+                            class="flex items-center gap-2 px-8 py-4 bg-primary text-white hover:bg-green-600 rounded-xl font-bold shadow-lg shadow-primary/20 transition-all transform hover:-translate-y-1 active:scale-95 group">
                             <span class="material-icons-round group-hover:rotate-12 transition-transform">campaign</span>
                             LAUNCH BROADCAST CAMPAIGN
                         </button>
@@ -217,27 +266,38 @@
 
                 {{-- Sidebar: Summary --}}
                 <aside class="lg:w-80 space-y-6">
-                    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 sticky top-24">
-                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-6 font-display">Campaign Summary</h3>
+                    <div
+                        class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 sticky top-24">
+                        <h3
+                            class="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-6 font-display">
+                            Campaign Summary</h3>
                         <div class="space-y-4">
-                            <div class="flex justify-between items-center py-2 border-b border-slate-50 dark:border-slate-800">
+                            <div
+                                class="flex justify-between items-center py-2 border-b border-slate-50 dark:border-slate-800">
                                 <span class="text-sm text-slate-600 dark:text-slate-400">Total Recipients</span>
-                                <span id="summaryTotalCount" class="text-lg font-bold text-slate-900 dark:text-white font-display">0</span>
+                                <span id="summaryTotalCount"
+                                    class="text-lg font-bold text-slate-900 dark:text-white font-display">0</span>
                             </div>
-                            <div class="flex justify-between items-center py-2 border-b border-slate-50 dark:border-slate-800">
+                            <div
+                                class="flex justify-between items-center py-2 border-b border-slate-50 dark:border-slate-800">
                                 <span class="text-sm text-slate-600 dark:text-slate-400">Selected Groups</span>
-                                <span id="summaryGroupsCount" class="text-sm font-medium text-slate-900 dark:text-white">0 Groups</span>
+                                <span id="summaryGroupsCount" class="text-sm font-medium text-slate-900 dark:text-white">0
+                                    Groups</span>
                             </div>
-                            <div class="flex justify-between items-center py-2 border-b border-slate-50 dark:border-slate-800">
+                            <div
+                                class="flex justify-between items-center py-2 border-b border-slate-50 dark:border-slate-800">
                                 <span class="text-sm text-slate-600 dark:text-slate-400">Est. Send Time</span>
-                                <span id="summaryEstTime" class="text-sm font-medium text-slate-900 dark:text-white">~0 minutes</span>
+                                <span id="summaryEstTime" class="text-sm font-medium text-slate-900 dark:text-white">~0
+                                    minutes</span>
                             </div>
                         </div>
-                        <div class="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800/30">
+                        <div
+                            class="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800/30">
                             <div class="flex gap-3">
                                 <span class="material-icons-round text-blue-500 text-sm">info</span>
                                 <p class="text-[11px] text-blue-700 dark:text-blue-300 leading-relaxed">
-                                    Messages are sent sequentially with a small delay to comply with platform rate limits and avoid spam flags.
+                                    Messages are sent sequentially with a small delay to comply with platform rate limits
+                                    and avoid spam flags.
                                 </p>
                             </div>
                         </div>
@@ -249,19 +309,22 @@
 
     {{-- Processing Overlay --}}
     <div id="sendingOverlay" class="hidden fixed inset-0 z-50 items-center justify-center bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-2xl flex flex-col items-center gap-4 max-w-sm text-center">
+        <div
+            class="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-2xl flex flex-col items-center gap-4 max-w-sm text-center">
             <div class="relative w-16 h-16">
                 <div class="absolute inset-0 border-4 border-slate-100 dark:border-slate-800 rounded-full"></div>
                 <div class="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
             </div>
             <h3 class="text-xl font-bold text-slate-900 dark:text-white">Launching Campaign</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400">We are queueing your messages. Please do not close this page.</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400">We are queueing your messages. Please do not close this
+                page.</p>
         </div>
     </div>
 @endsection
 
 @section('scripts')
     @parent
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function insertAtCursor(text) {
             const textarea = document.getElementById('messageTextarea');
@@ -280,14 +343,14 @@
             const end = textarea.selectionEnd;
             const text = textarea.value;
             const selectedText = text.substring(start, end);
-            
+
             let wrappedText = '';
             if (style === '```') {
-                 wrappedText = '```' + (selectedText || 'text') + '```';
+                wrappedText = '```' + (selectedText || 'text') + '```';
             } else {
-                 wrappedText = style + (selectedText || 'text') + style;
+                wrappedText = style + (selectedText || 'text') + style;
             }
-            
+
             textarea.value = text.substring(0, start) + wrappedText + text.substring(end);
             textarea.focus();
             const newPos = start + wrappedText.length;
@@ -300,7 +363,7 @@
             const preview = document.getElementById('messagePreview');
             const charCount = document.getElementById('charCountLabel');
             const text = textarea.value;
-            
+
             charCount.innerText = `${text.length} / 1024`;
 
             if (!text) {
@@ -308,9 +371,9 @@
                 preview.classList.add('italic', 'text-slate-400');
                 return;
             }
-            
+
             preview.classList.remove('italic', 'text-slate-400');
-            
+
             // Basic WhatsApp Markdown Simulation
             let html = text
                 .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") // Escape
@@ -320,7 +383,7 @@
                 .replace(/```(.*?)```/gs, '<code class="bg-slate-100 dark:bg-slate-700 px-1 rounded">$1</code>') // Code
                 .replace(/{Name}/g, '<span class="text-primary font-bold">John Doe</span>') // Placeholder
                 .replace(/{Whatsapp}/g, '<span class="text-primary font-bold">+123456789</span>'); // Placeholder
-            
+
             preview.innerHTML = html;
         }
 
@@ -336,7 +399,7 @@
 
             $('#messageTextarea').on('input', updateLivePreview);
 
-            $('#broadcastForm').on('submit', function() {
+            $('#broadcastForm').on('submit', function () {
                 $('#sendingOverlay').removeClass('hidden').addClass('flex');
             });
 
@@ -358,7 +421,7 @@
 
                 $('#summaryGroupsCount').text(selectedGroups.length + ' Groups');
                 const recipients = checkedSpecific > 0 ? checkedSpecific : totalCount;
-                const estMinutes = Math.ceil(recipients * 0.5 / 60); 
+                const estMinutes = Math.ceil(recipients * 0.5 / 60);
                 $('#summaryEstTime').text('~' + estMinutes + ' minutes');
             }
 
@@ -386,11 +449,11 @@
 
                         customers.forEach(function (customer) {
                             var row = `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors customer-row">
-                                        <td class="px-6 py-4 text-center"><input type="checkbox" name="specific_customers[]" value="${customer.whatsapp}" class="rounded border-slate-300 text-primary focus:ring-primary customer-checkbox"></td>
-                                        <td class="px-6 py-4 font-mono text-slate-700 dark:text-slate-300">${customer.whatsapp}</td>
-                                        <td class="px-6 py-4 text-slate-700 dark:text-slate-300">${customer.name || '-'}</td>
-                                        <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-xs text-slate-600 dark:text-slate-400">${groupName}</span></td>
-                                    </tr>`;
+                                                    <td class="px-6 py-4 text-center"><input type="checkbox" name="specific_customers[]" value="${customer.whatsapp}" class="rounded border-slate-300 text-primary focus:ring-primary customer-checkbox"></td>
+                                                    <td class="px-6 py-4 font-mono text-slate-700 dark:text-slate-300">${customer.whatsapp}</td>
+                                                    <td class="px-6 py-4 text-slate-700 dark:text-slate-300">${customer.name || '-'}</td>
+                                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-xs text-slate-600 dark:text-slate-400">${groupName}</span></td>
+                                                </tr>`;
                             $tbody.append(row);
                         });
 
@@ -417,6 +480,79 @@
                 $('.customer-row').each(function () {
                     const text = $(this).text().toLowerCase();
                     $(this).toggle(text.indexOf(query) > -1);
+                });
+            });
+
+            // Template Selector Logic
+            $('#templateSelector').on('change', function () {
+                const id = $(this).val();
+                if (!id) return;
+
+                $.get('{{ route("admin.message-templates.get-template") }}', { id: id }, function (response) {
+                    if (response.status === 'success') {
+                        $('#messageTextarea').val(response.message);
+                        updateLivePreview();
+                    }
+                });
+            });
+
+            // Save Template Logic
+            $('#saveAsTemplateBtn').on('click', function () {
+                const message = $('#messageTextarea').val();
+                if (!message) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Empty Message',
+                        text: 'Please write a message first.',
+                        confirmButtonColor: '#4a8fd9',
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Save Template',
+                    input: 'text',
+                    inputLabel: 'Enter a title for this template',
+                    inputPlaceholder: 'e.g. Greeting Message',
+                    inputValue: 'New Template',
+                    showCancelButton: true,
+                    confirmButtonText: 'Save Template',
+                    confirmButtonColor: '#4a8fd9',
+                    cancelButtonColor: '#64748b',
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'You need to write something!'
+                        }
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const title = result.value;
+
+                        $.post('{{ route("admin.message-templates.quick-store") }}', {
+                            _token: '{{ csrf_token() }}',
+                            title: title,
+                            message: message
+                        }, function (response) {
+                            if (response.status === 'success') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Saved!',
+                                    text: 'Template saved successfully.',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                // Append to selector
+                                $('#templateSelector').append(`<option value="${response.template.id}">${response.template.title}</option>`);
+                                $('#templateSelector').val(response.template.id);
+                            }
+                        }).fail(function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Failed to save template. Make sure you are logged in.',
+                            });
+                        });
+                    }
                 });
             });
         });

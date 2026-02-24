@@ -10,11 +10,11 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Temnplate extends Model implements HasMedia
+class MessageTemplate extends Model implements HasMedia
 {
     use SoftDeletes, InteractsWithMedia, HasFactory;
 
-    public $table = 'temnplates';
+    public $table = 'message_templates';
 
     protected $dates = [
         'created_at',

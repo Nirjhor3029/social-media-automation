@@ -58,9 +58,9 @@ class User extends Authenticatable
         return $this->hasMany(Customer::class, 'user_id', 'id');
     }
 
-    public function userTemnplates()
+    public function userMessageTemplates()
     {
-        return $this->hasMany(Temnplate::class, 'user_id', 'id');
+        return $this->hasMany(MessageTemplate::class, 'user_id', 'id');
     }
 
     public function userWhstappSubscribers()

@@ -42,11 +42,13 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('customer-groups/{customerGroup}/toggle-status', 'CustomerGroupController@toggleStatus')->name('customer-groups.toggle-status');
     Route::resource('customer-groups', 'CustomerGroupController');
 
-    // Temnplate
-    Route::delete('temnplates/destroy', 'TemnplateController@massDestroy')->name('temnplates.massDestroy');
-    Route::post('temnplates/media', 'TemnplateController@storeMedia')->name('temnplates.storeMedia');
-    Route::post('temnplates/ckmedia', 'TemnplateController@storeCKEditorImages')->name('temnplates.storeCKEditorImages');
-    Route::resource('temnplates', 'TemnplateController');
+    // Message Template
+    Route::delete('message-templates/destroy', 'MessageTemplateController@massDestroy')->name('message-templates.massDestroy');
+    Route::post('message-templates/media', 'MessageTemplateController@storeMedia')->name('message-templates.storeMedia');
+    Route::post('message-templates/ckmedia', 'MessageTemplateController@storeCKEditorImages')->name('message-templates.storeCKEditorImages');
+    Route::get('message-templates/get-template', 'MessageTemplateController@getTemplate')->name('message-templates.get-template');
+    Route::post('message-templates/quick-store', 'MessageTemplateController@quickStore')->name('message-templates.quick-store');
+    Route::resource('message-templates', 'MessageTemplateController');
 
     // Whstapp Subscriber
     Route::get('whstapp-subscribers/status', [WhstappSubscriberController::class, 'checkStatus'])->name('whstapp-subscribers.status');

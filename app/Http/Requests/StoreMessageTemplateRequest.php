@@ -2,16 +2,16 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Temnplate;
+use App\Models\MessageTemplate;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
 
-class StoreTemnplateRequest extends FormRequest
+class StoreMessageTemplateRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::allows('temnplate_create');
+        return Gate::allows('message_template_create');
     }
 
     public function rules()
@@ -20,6 +20,14 @@ class StoreTemnplateRequest extends FormRequest
             'title' => [
                 'string',
                 'nullable',
+            ],
+            'message' => [
+                'string',
+                'required',
+            ],
+            'user_id' => [
+                'required',
+                'integer',
             ],
         ];
     }

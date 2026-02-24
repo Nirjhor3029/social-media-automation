@@ -121,9 +121,9 @@ return [
             'deleted_at_helper' => ' ',
         ],
     ],
-    'temnplate' => [
-        'title' => 'Temnplate',
-        'title_singular' => 'Temnplate',
+    'messageTemplate' => [
+        'title' => 'Message Templates',
+        'title_singular' => 'Message Template',
         'fields' => [
             'id' => 'ID',
             'id_helper' => ' ',

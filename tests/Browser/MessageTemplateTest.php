@@ -6,15 +6,15 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 
-class TemnplateTest extends DuskTestCase
+class MessageTemplateTest extends DuskTestCase
 {
     public function testIndex()
     {
-        $admin = App\Models\User::find(1);
+        $admin = \App\Models\User::find(1);
         $this->browse(function (Browser $browser) use ($admin) {
             $browser->loginAs($admin);
-            $browser->visit(route('admin.temnplate.index'));
-            $browser->assertRouteIs('admin.temnplate.index');
+            $browser->visit(route('admin.message-templates.index'));
+            $browser->assertRouteIs('admin.message-templates.index');
         });
     }
 }

@@ -145,7 +145,8 @@ class CustomerGroupController extends Controller
     public function broadcast()
     {
         $groups = CustomerGroup::where('status', 1)->withCount('customers')->get();
-        return view('admin.customer_groups.broadcast', compact('groups'));
+        $messageTemplates = \App\Models\MessageTemplate::where('user_id', auth()->id())->get();
+        return view('admin.customer_groups.broadcast', compact('groups', 'messageTemplates'));
     }
 
     public function sendBroadcast(Request $request)

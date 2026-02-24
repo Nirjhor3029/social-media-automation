@@ -11,175 +11,175 @@ class PermissionsTableSeeder extends Seeder
     {
         $permissions = [
             [
-                'id'    => 1,
+                'id' => 1,
                 'title' => 'user_management_access',
             ],
             [
-                'id'    => 2,
+                'id' => 2,
                 'title' => 'permission_create',
             ],
             [
-                'id'    => 3,
+                'id' => 3,
                 'title' => 'permission_edit',
             ],
             [
-                'id'    => 4,
+                'id' => 4,
                 'title' => 'permission_show',
             ],
             [
-                'id'    => 5,
+                'id' => 5,
                 'title' => 'permission_delete',
             ],
             [
-                'id'    => 6,
+                'id' => 6,
                 'title' => 'permission_access',
             ],
             [
-                'id'    => 7,
+                'id' => 7,
                 'title' => 'role_create',
             ],
             [
-                'id'    => 8,
+                'id' => 8,
                 'title' => 'role_edit',
             ],
             [
-                'id'    => 9,
+                'id' => 9,
                 'title' => 'role_show',
             ],
             [
-                'id'    => 10,
+                'id' => 10,
                 'title' => 'role_delete',
             ],
             [
-                'id'    => 11,
+                'id' => 11,
                 'title' => 'role_access',
             ],
             [
-                'id'    => 12,
+                'id' => 12,
                 'title' => 'user_create',
             ],
             [
-                'id'    => 13,
+                'id' => 13,
                 'title' => 'user_edit',
             ],
             [
-                'id'    => 14,
+                'id' => 14,
                 'title' => 'user_show',
             ],
             [
-                'id'    => 15,
+                'id' => 15,
                 'title' => 'user_delete',
             ],
             [
-                'id'    => 16,
+                'id' => 16,
                 'title' => 'user_access',
             ],
             [
-                'id'    => 17,
+                'id' => 17,
                 'title' => 'whatsapp_access',
             ],
             [
-                'id'    => 18,
+                'id' => 18,
                 'title' => 'telegram_access',
             ],
             [
-                'id'    => 19,
+                'id' => 19,
                 'title' => 'metum_access',
             ],
             [
-                'id'    => 20,
+                'id' => 20,
                 'title' => 'instagram_access',
             ],
             [
-                'id'    => 21,
+                'id' => 21,
                 'title' => 'tiktok_access',
             ],
             [
-                'id'    => 22,
+                'id' => 22,
                 'title' => 'setting_access',
             ],
             [
-                'id'    => 23,
+                'id' => 23,
                 'title' => 'customer_create',
             ],
             [
-                'id'    => 24,
+                'id' => 24,
                 'title' => 'customer_edit',
             ],
             [
-                'id'    => 25,
+                'id' => 25,
                 'title' => 'customer_show',
             ],
             [
-                'id'    => 26,
+                'id' => 26,
                 'title' => 'customer_delete',
             ],
             [
-                'id'    => 27,
+                'id' => 27,
                 'title' => 'customer_access',
             ],
             [
-                'id'    => 28,
-                'title' => 'temnplate_create',
+                'id' => 28,
+                'title' => 'message_template_create',
             ],
             [
-                'id'    => 29,
-                'title' => 'temnplate_edit',
+                'id' => 29,
+                'title' => 'message_template_edit',
             ],
             [
-                'id'    => 30,
-                'title' => 'temnplate_show',
+                'id' => 30,
+                'title' => 'message_template_show',
             ],
             [
-                'id'    => 31,
-                'title' => 'temnplate_delete',
+                'id' => 31,
+                'title' => 'message_template_delete',
             ],
             [
-                'id'    => 32,
-                'title' => 'temnplate_access',
+                'id' => 32,
+                'title' => 'message_template_access',
             ],
             [
-                'id'    => 33,
+                'id' => 33,
                 'title' => 'whstapp_subscriber_create',
             ],
             [
-                'id'    => 34,
+                'id' => 34,
                 'title' => 'whstapp_subscriber_edit',
             ],
             [
-                'id'    => 35,
+                'id' => 35,
                 'title' => 'whstapp_subscriber_show',
             ],
             [
-                'id'    => 36,
+                'id' => 36,
                 'title' => 'whstapp_subscriber_delete',
             ],
             [
-                'id'    => 37,
+                'id' => 37,
                 'title' => 'whstapp_subscriber_access',
             ],
             [
-                'id'    => 38,
+                'id' => 38,
                 'title' => 'whatsapp_group_create',
             ],
             [
-                'id'    => 39,
+                'id' => 39,
                 'title' => 'whatsapp_group_edit',
             ],
             [
-                'id'    => 40,
+                'id' => 40,
                 'title' => 'whatsapp_group_show',
             ],
             [
-                'id'    => 41,
+                'id' => 41,
                 'title' => 'whatsapp_group_delete',
             ],
             [
-                'id'    => 42,
+                'id' => 42,
                 'title' => 'whatsapp_group_access',
             ],
             [
-                'id'    => 43,
+                'id' => 43,
                 'title' => 'profile_password_edit',
             ],
         ];

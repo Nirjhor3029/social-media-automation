@@ -141,7 +141,9 @@ class WhatsappGroupController extends Controller
         $subscriber = WhstappSubscriber::findOrFail($subscriberId);
         $groups = WhatsappGroup::whereIn('id', $groupIds)->get();
 
-        return view('admin.whatsappGroups.broadcast', compact('subscriber', 'groups'));
+        $messageTemplates = \App\Models\MessageTemplate::where('user_id', auth()->id())->get();
+
+        return view('admin.whatsappGroups.broadcast', compact('subscriber', 'groups', 'messageTemplates'));
     }
 
     public function sendBroadcast(Request $request)
@@ -187,6 +189,7 @@ class WhatsappGroupController extends Controller
 
         $subscriber = WhstappSubscriber::findOrFail($request->subscriber_id);
         $groups = WhatsappGroup::whereIn('group_identification', $request->group_jids)->get();
+        $messageTemplates = \App\Models\MessageTemplate::where('user_id', auth()->id())->get();
 
         if ($failCount === 0) {
             session()->flash('success', "Broadcast sent successfully to all $successCount groups!");
@@ -197,6 +200,6 @@ class WhatsappGroupController extends Controller
             }
         }
 
-        return view('admin.whatsappGroups.broadcast', compact('subscriber', 'groups'));
+        return view('admin.whatsappGroups.broadcast', compact('subscriber', 'groups', 'messageTemplates'));
     }
 }

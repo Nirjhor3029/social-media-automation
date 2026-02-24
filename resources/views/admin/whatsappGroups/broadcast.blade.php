@@ -47,9 +47,18 @@
                             <!-- Message Input -->
                             <div
                                 class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-[#1a222c]">
-                                <div class="mb-4 flex items-center justify-between">
+                                <div class="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                                     <h3 class="text-base font-bold text-slate-900 dark:text-white">Compose Message</h3>
-                                    <span class="text-xs text-slate-400" id="char-count">0 characters</span>
+                                    <div class="flex items-center gap-3">
+                                        <select id="template-selector"
+                                            class="rounded-lg border-slate-200 bg-slate-50 text-xs dark:border-slate-700 dark:bg-slate-800 dark:text-white">
+                                            <option value="">Choose Template</option>
+                                            @foreach($messageTemplates as $template)
+                                                <option value="{{ $template->id }}">{{ $template->title }}</option>
+                                            @endforeach
+                                        </select>
+                                        <span class="text-xs text-slate-400" id="char-count">0 characters</span>
+                                    </div>
                                 </div>
                                 <!-- Formatting Toolbar -->
                                 <div
@@ -79,6 +88,12 @@
                                         class="insert-placeholder flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-bold text-primary hover:bg-primary/10">
                                         <span class="material-symbols-outlined text-[16px]">person_add</span>
                                         [Group Name]
+                                    </button>
+                                    <div class="flex-1"></div>
+                                    <button type="button" id="save-as-template-btn"
+                                        class="flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-bold text-amber-600 hover:bg-amber-50">
+                                        <span class="material-symbols-outlined text-[16px]">save</span>
+                                        Save as Template
                                     </button>
                                 </div>
                                 <textarea name="message" id="message-text" rows="10"
@@ -172,6 +187,7 @@
 
 @section('scripts')
     @parent
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function () {
             const $textarea = $('#message-text');
@@ -251,6 +267,79 @@
                 $textarea[0].setSelectionRange(newCursorPos, newCursorPos);
 
                 updatePreview();
+            });
+
+            // Template Selector Logic
+            $('#template-selector').on('change', function () {
+                const id = $(this).val();
+                if (!id) return;
+
+                $.get('{{ route("admin.message-templates.get-template") }}', { id: id }, function (response) {
+                    if (response.status === 'success') {
+                        $textarea.val(response.message);
+                        updatePreview();
+                    }
+                });
+            });
+
+            // Save as Template Logic
+            $('#save-as-template-btn').on('click', function () {
+                const message = $textarea.val();
+                if (!message) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Empty Message',
+                        text: 'Please write a message first.',
+                        confirmButtonColor: '#4a8fd9',
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Save as Template',
+                    input: 'text',
+                    inputLabel: 'Enter a title for this template',
+                    inputPlaceholder: 'e.g. Welcome Message',
+                    inputValue: 'New Template',
+                    showCancelButton: true,
+                    confirmButtonText: 'Save Template',
+                    confirmButtonColor: '#4a8fd9',
+                    cancelButtonColor: '#64748b',
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'You need to write something!'
+                        }
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const title = result.value;
+
+                        $.post('{{ route("admin.message-templates.quick-store") }}', {
+                            _token: '{{ csrf_token() }}',
+                            title: title,
+                            message: message
+                        }, function (response) {
+                            if (response.status === 'success') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Saved!',
+                                    text: 'Template saved successfully.',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                // Append to selector
+                                $('#template-selector').append(`<option value="${response.template.id}">${response.template.title}</option>`);
+                                $('#template-selector').val(response.template.id);
+                            }
+                        }).fail(function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Failed to save template. Make sure you are logged in.',
+                            });
+                        });
+                    }
+                });
             });
         });
     </script>
