@@ -117,9 +117,14 @@
                             <code class="text-xs text-primary font-bold">{{ $subcriber->session }}</code>
                         </div>
 
-                        <a href="{{ route('admin.home') }}" class="mt-8 px-8 py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-all">
-                            Go to Dashboard
-                        </a>
+                        <div class="flex flex-col sm:flex-row gap-4 mt-8 w-full">
+                            <a href="{{ route('admin.home') }}" class="flex-1 px-8 py-3 bg-primary text-white text-center font-bold rounded-xl shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-all">
+                                Go to Dashboard
+                            </a>
+                            <button onclick="disconnectWhatsApp()" class="flex-1 px-8 py-3 bg-red-500 text-white text-center font-bold rounded-xl shadow-lg shadow-red-500/30 hover:scale-105 active:scale-95 transition-all">
+                                Disconnect WhatsApp
+                            </button>
+                        </div>
                     </div>
                 @else
                     <div class="relative group">
@@ -321,6 +326,34 @@
             @if(!in_array($subcriber->status, ['authenticated', 'ready', 'connected']))
             pollInterval = setInterval(checkStatus, 3000);
             @endif
+
+            window.disconnectWhatsApp = function() {
+                if (confirm('Are you sure you want to disconnect WhatsApp? This will unlink your device.')) {
+                    const disconnectUrl = "{{ route('admin.whstapp-subscribers.disconnect') }}";
+                    fetch(disconnectUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            subscriber_id: subscriberId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.ok) {
+                            window.location.reload();
+                        } else {
+                            alert(data.message || 'Failed to disconnect.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Disconnect error:', error);
+                        alert('An error occurred while disconnecting.');
+                    });
+                }
+            };
         });
     </script>
 @endsection

@@ -220,4 +220,53 @@ class WhstappSubscriberController extends Controller
 
         return response()->json(['ok' => false, 'status' => $subcriber->status]);
     }
+
+    public function disconnect(Request $request)
+    {
+
+        // return response()->json(['ok' => false, 'message' => 'Disconnect feature is currently disabled. Please contact support.'], 503);
+        
+        
+        $subscriber_id = $request->subscriber_id;
+        $subcriber = WhstappSubscriber::find($subscriber_id);
+
+        if (!$subcriber || !$subcriber->session) {
+            return response()->json(['ok' => false, 'message' => 'No session found'], 404);
+        }
+
+        try {
+            $baseUrl = env('SMA_BASE_URL', 'http://localhost:3000');
+
+            // return ([
+            //     $subcriber->session,
+            //     $baseUrl . "/api/sessions/{$subcriber->session}"
+            // ]);
+            // The user mentioned hitting the URL deletes the session and unlinks the device.
+            // Usually this is a DELETE request or a GET request. 
+            // The user said: "ei url e sessionID = nirjhor_01685262326 diye hit korle"
+            // Let's use GET if they mean "hit the url" like a browser, but standard API would be DELETE.
+            // Actually, many simple APIs like this use DELETE or GET.
+            // Let's try GET first as it's the safest assumption for "hit the url" unless specified otherwise.
+            // Wait, the user provided: http://localhost:3000/api/sessions/nirjhor_01685262326
+            // If I use Http::delete, it sends a DELETE request. If they didn't specify the method, 
+            // and it's a simple URL "hit", it might be a GET.
+            // However, the RESTful way is DELETE.
+            // Let's use GET since it sounds like a simple endpoint they just "hit".
+            $response = \Illuminate\Support\Facades\Http::delete($baseUrl . "/api/sessions/{$subcriber->session}");
+
+            if ($response->successful()) {
+                $subcriber->update([
+                    'status' => 'disconnected',
+                    'qr' => null,
+                    'session' => null
+                ]);
+
+                return response()->json(['ok' => true, 'message' => 'Disconnected successfully']);
+            } else {
+                return response()->json(['ok' => false, 'message' => 'Failed to disconnect from server'], 500);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['ok' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 }

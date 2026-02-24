@@ -201,25 +201,38 @@
                     <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Platform Status
                     </h3>
                     <div class="space-y-4">
-                        <!-- WhatsApp -->
                         @if (isset($whatsappSubscriber) && in_array($whatsappSubscriber->status, ['ready', 'authenticated', 'connected']))
-                            <div
-                                class="flex items-center justify-between rounded-lg bg-green-50 p-3 ring-1 ring-green-100 dark:bg-green-900/10 dark:ring-green-900/30">
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="flex h-10 w-10 items-center justify-center rounded-full bg-green-500 text-white shadow-sm">
-                                        <span class="material-symbols-outlined text-[20px]">chat</span>
+                            <div class="relative group">
+                                <a href="{{ route('admin.whstapp-subscribers.connect', ['subscriber_id' => $whatsappSubscriber->id ?? null]) }}"
+                                    class="flex items-center justify-between rounded-lg bg-green-50 p-3 ring-1 ring-green-100 hover:bg-green-100/80 transition-all dark:bg-green-900/10 dark:ring-green-900/30 dark:hover:bg-green-900/20">
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="flex h-10 w-10 items-center justify-center rounded-full bg-green-500 text-white shadow-sm">
+                                            <span class="material-symbols-outlined text-[20px]">chat</span>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-semibold text-slate-900 dark:text-white">WhatsApp</p>
+                                            <p class="text-xs text-green-700 dark:text-green-400">Connected • Active</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">WhatsApp</p>
-                                        <p class="text-xs text-green-700 dark:text-green-400">Connected • Active</p>
+                                    <div class="flex items-center gap-4">
+                                        <button
+                                            onclick="event.preventDefault(); event.stopPropagation(); disconnectWhatsApp('{{ $whatsappSubscriber->id }}')"
+                                            class="flex h-8 w-8 items-center justify-center rounded-lg bg-red-100/50 text-red-600 hover:bg-red-100 transition-all dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
+                                            title="Disconnect WhatsApp">
+                                            <span class="material-symbols-outlined text-[18px]">link_off</span>
+                                        </button>
+                                        <div class="flex items-center gap-2">
+                                            <div class="relative flex h-2.5 w-2.5">
+                                                <span
+                                                    class="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-green-400 opacity-75"></span>
+                                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                                            </div>
+                                            <span
+                                                class="material-symbols-outlined text-slate-400 text-[18px]">chevron_right</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="relative flex h-2.5 w-2.5">
-                                    <span
-                                        class="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-green-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                                </div>
+                                </a>
                             </div>
                         @else
                             <a href="{{ route('admin.whstapp-subscribers.connect') }}"
@@ -234,7 +247,8 @@
                                         <p class="text-xs text-slate-500 dark:text-slate-400">Not Connected • Click to Link</p>
                                     </div>
                                 </div>
-                                <div class="flex h-6 w-6 items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
+                                <div
+                                    class="flex h-6 w-6 items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
                                     <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
                                 </div>
                             </a>
@@ -277,4 +291,77 @@
 @endsection
 @section('scripts')
     @parent
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.disconnectWhatsApp = function (subscriberId) {
+            Swal.fire({
+                title: 'Disconnect WhatsApp?',
+                text: "Your device will be unlinked and you'll need to scan the QR code again to reconnect.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Yes, disconnect',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-900',
+                    title: 'text-slate-900 dark:text-white font-bold',
+                    htmlContainer: 'text-slate-500 dark:text-slate-400 shadow-none'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Disconnecting...',
+                        text: 'Please wait while we unlink your account',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading()
+                        }
+                    });
+
+                    const disconnectUrl = "{{ route('admin.whstapp-subscribers.disconnect') }}";
+
+                    fetch(disconnectUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            subscriber_id: subscriberId
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.ok) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Disconnected',
+                                    text: 'WhatsApp has been successfully disconnected.',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Failed',
+                                    text: data.message || 'Failed to disconnect.'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Disconnect error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'An unexpected error occurred.'
+                            });
+                        });
+                }
+            });
+        };
+    </script>
 @endsection

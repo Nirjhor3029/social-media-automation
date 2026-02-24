@@ -54,6 +54,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Whstapp Subscriber
     Route::get('whstapp-subscribers/status', [WhstappSubscriberController::class, 'checkStatus'])->name('whstapp-subscribers.status');
     Route::get('whstapp-subscribers/connect', [WhstappSubscriberController::class, 'connect'])->name('whstapp-subscribers.connect');
+    Route::post('whstapp-subscribers/disconnect', [WhstappSubscriberController::class, 'disconnect'])->name('whstapp-subscribers.disconnect');
     Route::delete('whstapp-subscribers/destroy', 'WhstappSubscriberController@massDestroy')->name('whstapp-subscribers.massDestroy');
     Route::resource('whstapp-subscribers', 'WhstappSubscriberController');
 
