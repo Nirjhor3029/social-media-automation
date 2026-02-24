@@ -111,16 +111,30 @@ class WhstappSubscriberController extends Controller
         }
 
         if ($subscriber_id == null) {
-            $subcriber = WhstappSubscriber::whereNotNull('phone')
+            // Check if any subscriber exists with this phone across all users (ignoring Global Scope)
+            $existingSubscriber = WhstappSubscriber::withoutGlobalScopes()
                 ->where('phone', $authUser->phone)
                 ->first();
-            if (!isset($subcriber)) {
+
+            if ($existingSubscriber) {
+                // If it belongs to someone else, warn the user
+                if ($existingSubscriber->user_id != $authUser->id) {
+                    return Redirect::back()->with('warning', 'This phone number is already connected to another account.');
+                }
+                $subcriber = $existingSubscriber;
+            } else {
+                // Create new since it doesn't exist anywhere
                 $subcriber = new WhstappSubscriber();
-                $subcriber->primary = isset($primarySubscriber) ? 0 : 1; // Set as primary if no other primary exists
+                $subcriber->primary = $primarySubscriber ? 0 : 1;
                 $subcriber->name = $authUser->name;
                 $subcriber->phone = $authUser->phone;
                 $subcriber->user_id = $authUser->id;
-                $subcriber->save();
+
+                try {
+                    $subcriber->save();
+                } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+                    return Redirect::back()->with('warning', 'This phone number is already registered in our system.');
+                }
             }
         } else {
             $subcriber = WhstappSubscriber::find($subscriber_id);

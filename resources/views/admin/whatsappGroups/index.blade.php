@@ -65,27 +65,32 @@
             <!-- Filters & Actions -->
             <div class="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
                 <div class="flex w-full flex-col gap-4 sm:w-auto lg:flex-row lg:items-end">
-                    <div class="relative w-full sm:w-72">
-                        <label class="sr-only" for="search">Search groups</label>
-                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <span class="material-symbols-outlined text-slate-400">search</span>
-                        </div>
-                        <input
-                            class="block w-full rounded-lg border-0 py-2.5 pl-10 ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary dark:bg-slate-800 dark:ring-slate-700 dark:text-white sm:text-sm sm:leading-6"
-                            id="search" name="search" placeholder="Search by name or number..." type="text" />
+
+                    <div class="w-full sm:w-64">
+                        <select
+                            class="block w-full rounded-lg border-0 py-2.5 pl-3 pr-10 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary dark:bg-slate-800 dark:ring-slate-700 dark:text-white sm:text-sm sm:leading-6"
+                            id="number-filter" name="number-filter">
+                            <option value="">All Connected Numbers</option>
+                            @foreach($subscribers as $subscriber)
+                                <option value="{{ $subscriber->id }}">{{ $subscriber->phone }} ({{ $subscriber->name }})
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
+
                     <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
-                        <div class="w-full sm:w-64">
-                            <select
-                                class="block w-full rounded-lg border-0 py-2.5 pl-3 pr-10 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-primary dark:bg-slate-800 dark:ring-slate-700 dark:text-white sm:text-sm sm:leading-6"
-                                id="number-filter" name="number-filter">
-                                <option value="">All Connected Numbers</option>
-                                @foreach($subscribers as $subscriber)
-                                    <option value="{{ $subscriber->id }}">{{ $subscriber->phone }} ({{ $subscriber->name }})
-                                    </option>
-                                @endforeach
-                            </select>
+
+
+                        <div class="relative w-full sm:w-72">
+                            <label class="sr-only" for="search">Search groups</label>
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <span class="material-symbols-outlined text-slate-400">search</span>
+                            </div>
+                            <input
+                                class="block w-full rounded-lg border-0 py-2.5 pl-10 ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary dark:bg-slate-800 dark:ring-slate-700 dark:text-white sm:text-sm sm:leading-6"
+                                id="search" name="search" placeholder="Search by name or number..." type="text" />
                         </div>
+
                         <button type="button" id="sync-now-btn"
                             class="flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all active:scale-95">
                             <span class="material-symbols-outlined text-[18px]">sync</span>
